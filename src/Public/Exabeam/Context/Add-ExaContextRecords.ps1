@@ -16,7 +16,6 @@ Function Add-ExaContextRecords {
         [ValidateNotNull()]
         [string] $ContextId,
         
-
         [Parameter(Mandatory = $true, Position = 1)]
         [PSCustomObject[]] $Data = @(),
 
@@ -28,10 +27,12 @@ Function Add-ExaContextRecords {
         )]
         [string] $Operation,
 
-
         [Parameter(Mandatory = $false, Position = 3)]
         [ValidateNotNull()]
-        [pscredential] $Credential = $LrtConfig.Exabeam.ApiKey
+        [pscredential] $Credential = $LrtConfig.Exabeam.ApiKey,
+
+        [Parameter(Mandatory = $false)]
+        [switch] $PassThru
     )
                                                                     
     Begin {
@@ -40,7 +41,6 @@ Function Add-ExaContextRecords {
         # Request Setup
         $BaseUrl = $LrtConfig.Exabeam.BaseUrl
         $Token = $LrtConfig.Exabeam.Token.access_token
-
 
         # Define HTTP Headers
         $Headers = [Dictionary[string,string]]::new()
@@ -92,7 +92,7 @@ Function Add-ExaContextRecords {
             return $Response
         }
         
-        return $Response
+        if ($PassThru) { return $Response }
     }
 
     End { }

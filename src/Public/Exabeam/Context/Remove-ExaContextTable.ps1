@@ -16,10 +16,12 @@ Function Remove-ExaContextTable {
         [ValidateNotNull()]
         [string] $id,
 
-
         [Parameter(Mandatory = $false, Position = 4)]
         [ValidateNotNull()]
-        [pscredential] $Credential = $LrtConfig.Exabeam.ApiKey
+        [pscredential] $Credential = $LrtConfig.Exabeam.ApiKey,
+
+        [Parameter(Mandatory = $false)]
+        [switch] $PassThru
     )
                                                                     
     Begin {
@@ -28,7 +30,6 @@ Function Remove-ExaContextTable {
         # Request Setup
         $BaseUrl = $LrtConfig.Exabeam.BaseUrl
         $Token = $LrtConfig.Exabeam.Token.access_token
-
 
         # Define HTTP Headers
         $Headers = [Dictionary[string,string]]::new()
@@ -54,7 +55,7 @@ Function Remove-ExaContextTable {
             return $Response
         }
         
-        return $Response
+        if ($PassThru) { return $Response }
     }
 
     End { }
