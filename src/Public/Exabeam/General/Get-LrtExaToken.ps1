@@ -1,7 +1,5 @@
 using namespace System
-using namespace System.Net
 using namespace System.Collections.Generic
-using namespace System.Web
 
 Function Get-LrtExaToken {
     <#
@@ -17,16 +15,6 @@ Function Get-LrtExaToken {
         PSCredential containing an API Token in the Password field.
     .OUTPUTS
         [System.Object] representing an Exabeam resource access token.
-
-        Object Properties
-        -----------------
-        token_type      = Type of token (e.g., "Bearer").
-        expires_in      = Expiry time span in seconds.
-        ext_expires_in  = Extended expiry time span in seconds.
-        expires_on      = Expiry timestamp as UTC datetime.
-        not_before      = Creation timestamp as UTC datetime.
-        resource        = Resource URL for which the token is generated.
-        access_token    = The actual bearer token string.
     .NOTES
         Exabeam-API   
     .LINK
@@ -42,14 +30,18 @@ Function Get-LrtExaToken {
 
     Begin { 
         $Me = $MyInvocation.MyCommand.Name
+        Enable-TrustAllCertsPolicy
 
-        # Credentials
-        $ClientId = $LrtConfig.Exabeam.ApiKey.Username
-        $ClientSecret = $LrtConfig.Exabeam.ApiKey.GetNetworkCredential().Password
+        # Use passed credential or fallback to config
+        $ExaCred = if ($PSBoundParameters.ContainsKey('Credential')) { $Credential } else { $LrtConfig.Exabeam.ApiKey }
 
-        $ResourceUri = $LrtConfig.Exabeam.BaseUrl + 'auth/v1/token'
+        $ClientId = $ExaCred.Username
+        $ClientSecret = $ExaCred.GetNetworkCredential().Password
+
+        # Ensure BaseUrl ends with a slash before appending
+        $BaseUrl = $LrtConfig.Exabeam.BaseUrl.TrimEnd('/')
+        $ResourceUri = "$BaseUrl/auth/v1/token"
     }
-
 
     Process {
         $BodyContents = [PSCustomObject]@{
@@ -58,30 +50,31 @@ Function Get-LrtExaToken {
             client_secret = $ClientSecret
         }
 
-        # Establish Body Contents
         $Body = $BodyContents | ConvertTo-Json 
-        Write-Verbose $Body
+        Write-Verbose "[$Me]: Exabeam Auth Request Body Built"
 
-        # Headers
         $Headers = [Dictionary[string,string]]::new()
         $Headers.Add("accept",'application/json')
         $Headers.Add("content-type",'application/json')
 
+        # Use the compliant v1.5.0 wrapper
+        $TokenResponse = Invoke-RestAPIMethod -Uri $ResourceUri -Headers $Headers -Method $HttpMethod.Post -Body $Body -Origin $Me
 
-        # Request
-        try {
-            $Token = Invoke-RestMethod -Uri $ResourceUri -Headers $Headers -Method $HttpMethod.Post -Body $Body
+        # If the wrapper returns our standard ErrorObject, throw it so the caller knows it failed
+        if ($null -ne $TokenResponse.Error) {
+            $PSCmdlet.ThrowTerminatingError([System.Management.Automation.ErrorRecord]::new(
+                [Exception]::new("[$Me] Exabeam Auth Failed: $($TokenResponse.Error)"),
+                "ExabeamAuthFailure",
+                [System.Management.Automation.ErrorCategory]::AuthenticationError,
+                $ResourceUri
+            ))
         }
-        catch [WebException] {
-            $Err = Get-RestErrorMessage $_
-            throw [Exception] "[$Me] [$($Err.error)]: $($Err.error_description)`n"
-        }
 
-        $Token | Add-Member -MemberType NoteProperty -Name expires_on -Value $((get-date).AddSeconds($Token.expires_in))
+        # Add expiration calculation
+        $TokenResponse | Add-Member -MemberType NoteProperty -Name expires_on -Value $((Get-Date).AddSeconds($TokenResponse.expires_in)) -Force
 
-        return $Token
+        return $TokenResponse
     }
-
 
     End { }
 }
