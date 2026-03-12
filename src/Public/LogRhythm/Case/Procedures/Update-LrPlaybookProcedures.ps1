@@ -104,6 +104,9 @@ Function Update-LrPlaybookProcedures {
         [object[]] $BulkProcedures,
 
         [Parameter(Mandatory = $false, Position = 13)]
+        [switch] $PassThru,
+
+        [Parameter(Mandatory = $false, Position = 14)]
         [ValidateNotNull()]
         [pscredential] $Credential = $LrtConfig.LogRhythm.ApiKey
     )

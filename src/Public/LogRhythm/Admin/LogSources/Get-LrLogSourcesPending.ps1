@@ -270,7 +270,7 @@ Function Get-LrLogSourcesPending {
                 # Apply to Query String
                 $QueryString = $QueryParams | ConvertTo-QueryString
                 # Update Query URL
-                $RequestUrl = $BaseUrl + "/lr-admin-api/logsources/" + $QueryString
+                $RequestUrl = $BaseUrl + "/lr-admin-api/logsources-request/" + $QueryString
                 # Retrieve Query Results
                 $PaginationResults = Invoke-RestAPIMethod -Uri $RequestUrl -Headers $Headers -Method $Method -Origin $Me
                 if (($null -ne $PaginationResults.Error) -and ($PaginationResults.Error -eq $true)) {

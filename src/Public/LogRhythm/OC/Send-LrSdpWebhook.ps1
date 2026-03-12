@@ -5,6 +5,9 @@ Function Send-LrSdpWebhook {
     <#
     .SYNOPSIS
         Submits a log message in to a LogRhythm Open Collector Webhook Beat for log ingestion.
+    .DESCRIPTION
+        Send-LrSdpWebhook submits a structured log message to a LogRhythm Open Collector
+        Webhook Beat endpoint for ingestion into the SIEM platform.
     .EXAMPLE
         PS C:\> Send-LrSdpWebhook -Account 'ehart' -sip '192.168.5.6' -dip '192.168.5.7' -OCUrl 'http://172.17.5.20:8085/webhook' -fqbn 'webhook_SDPGenericExample'
     .NOTES
@@ -269,10 +272,7 @@ Function Send-LrSdpWebhook {
         [String] $OCUrl,
 
         [Parameter(Mandatory = $false, Position = 78)]
-        [int32]$MaxRetries = 4,
-
-        [Parameter(Mandatory = $false, Position = 79)]
-        [int32]$RetryDelayMs = 250
+        [switch] $PassThru
     )
 
     Begin {
@@ -293,11 +293,8 @@ Function Send-LrSdpWebhook {
         # Define HTTP Method
         $Method = $HttpMethod.post
 
-        # Check preference requirements for self-signed certificates and set enforcement for Tls1.2 
+        # Check preference requirements for self-signed certificates and set enforcement for Tls1.2
         Enable-TrustAllCertsPolicy
-
-        # Variables supporting HTTP Retry for 429 Error handling
-        $RetryCounter = 0
     }
 
     Process {
@@ -396,25 +393,10 @@ Function Send-LrSdpWebhook {
         $Body = $OCLog | ConvertTo-Json -compress
 
         # Send Request
-        Do {
-            $RetryRequest = $false
-            Try {
-                $Response = Invoke-RestMethod $BaseUrl -Headers $Headers -Method $Method -Body $Body
-            } Catch {
-                if($_.Exception.Response.StatusCode.value__ -eq 429 ){
-                    if($RetryCounter -ge $MaxRetries){
-                        $RetryRequest = $false
-                    } else {
-                        $RetryCounter += 1
-                        $RetryRequest = $true
-                        Start-Sleep -Milliseconds $RetryDelayMs
-                    }
-                } else {
-                    return $_
-                }
-
-            }
-        } While ($RetryRequest)
+        $Response = Invoke-RestAPIMethod -Uri $BaseUrl -Headers $Headers -Method $Method -Body $Body -Origin $Me
+        if (($null -ne $Response.Error) -and ($Response.Error -eq $true)) {
+            return $Response
+        }
 
         if ($PassThru) {
             return $Response

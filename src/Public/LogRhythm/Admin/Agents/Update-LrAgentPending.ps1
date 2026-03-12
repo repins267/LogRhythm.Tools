@@ -59,127 +59,126 @@ Function Update-LrAgentPending {
         [ValidateSet('accept','associate', 'reject', ignorecase=$true)]
         [string] $AcceptanceStatus,
 
-        [Parameter(Mandatory = $false, Position = 4)]
+        [Parameter(Mandatory = $false, Position = 2)]
         [int] $AssociateAgentId,
 
-        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 1)]
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 3)]
         [ValidateSet('SystemMonitor','SystemMonitorBasic', 'SystemMonitorCollector', ignorecase=$true)]
         [string] $LicenseType,
 
-        [Parameter(Mandatory = $false, Position = 2)]
+        [Parameter(Mandatory = $false, Position = 4)]
         [bool] $OverrideEntityForNewHosts = $false,
 
-        [Parameter(Mandatory = $false, Position = 3)]
+        [Parameter(Mandatory = $false, Position = 5)]
         [int] $ConfigPolicy,
 
-        [Parameter(Mandatory = $false, Position = 4)]
+        [Parameter(Mandatory = $false, Position = 6)]
         [string] $Guid,
 
-        [Parameter(Mandatory = $false, Position = 5)]
+        [Parameter(Mandatory = $false, Position = 7)]
         [int] $MediatorId,
 
-        [Parameter(Mandatory = $false, Position = 6)]
+        [Parameter(Mandatory = $false, Position = 8)]
         [int] $Priority,
 
-        [Parameter(Mandatory = $false, Position = 7)]
+        [Parameter(Mandatory = $false, Position = 9)]
         [int] $ClientAddress = 0,
 
-        [Parameter(Mandatory = $false, Position = 8)]
+        [Parameter(Mandatory = $false, Position = 10)]
         [int] $ClientPort = 0,
 
-        [Parameter(Mandatory = $false, Position = 9)]
+        [Parameter(Mandatory = $false, Position = 11)]
         [int] $MediatorSSLPort = 443,
 
-        [Parameter(Mandatory = $false, Position = 10)]
+        [Parameter(Mandatory = $false, Position = 12)]
         [string] $MediatorIPv4,
 
-        [Parameter(Mandatory = $false, Position = 11)]
+        [Parameter(Mandatory = $false, Position = 13)]
         [string] $MediatorIPv6,
 
-        [Parameter(Mandatory = $false, Position = 12)]
+        [Parameter(Mandatory = $false, Position = 14)]
         [string] $MediatorFQDN,
 
-        [Parameter(Mandatory = $false, Position = 13)]
-        [int] $FimPolicies,
-        
-        [Parameter(Mandatory = $false, Position = 14)]
-        [int] $RealTimeRecordBufferLimit = 10485760,
-
         [Parameter(Mandatory = $false, Position = 15)]
-        [int] $RealtimeIDMPollingInterval = 5,
-
-        [Parameter(Mandatory = $false, Position = 19)]
-        [bool] $RTFIMExcludeNestedDirectoryEvents = $false,
+        [int] $FimPolicies,
 
         [Parameter(Mandatory = $false, Position = 16)]
-        [bool] $FIMEnabled = $false,
+        [int] $RealTimeRecordBufferLimit = 10485760,
 
         [Parameter(Mandatory = $false, Position = 17)]
-        [bool] $DataDefender = $false,
+        [int] $RealtimeIDMPollingInterval = 5,
 
         [Parameter(Mandatory = $false, Position = 18)]
-        [bool] $RTFIM = $false,
+        [bool] $FIMEnabled = $false,
 
         [Parameter(Mandatory = $false, Position = 19)]
-        [bool] $RTFIMAnomalyDetection = $false,
-        
+        [bool] $DataDefender = $false,
 
         [Parameter(Mandatory = $false, Position = 20)]
-        [bool] $RIMEnabled = $false,
+        [bool] $RTFIM = $false,
 
         [Parameter(Mandatory = $false, Position = 21)]
-        [int] $RIMPolicies,
+        [bool] $RTFIMAnomalyDetection = $false,
 
         [Parameter(Mandatory = $false, Position = 22)]
-        [int] $DLDPolicy,
+        [bool] $RTFIMExcludeNestedDirectoryEvents = $false,
 
         [Parameter(Mandatory = $false, Position = 23)]
-        [bool] $PMIncludeUAMData = $false,
+        [bool] $RIMEnabled = $false,
 
         [Parameter(Mandatory = $false, Position = 24)]
-        [bool] $PM = $false,
+        [int] $RIMPolicies,
 
         [Parameter(Mandatory = $false, Position = 25)]
-        [int] $PMInterval = 5,
+        [int] $DLDPolicy,
 
         [Parameter(Mandatory = $false, Position = 26)]
-        [bool] $NCM = $false,
+        [bool] $PMIncludeUAMData = $false,
 
         [Parameter(Mandatory = $false, Position = 27)]
-        [bool] $NCMIncludeUAM = $false,
+        [bool] $PM = $false,
 
         [Parameter(Mandatory = $false, Position = 28)]
-        [bool] $NCMLogListeners = $false,
+        [int] $PMInterval = 5,
 
         [Parameter(Mandatory = $false, Position = 29)]
-        [bool] $NCMLogInbound = $false,
+        [bool] $NCM = $false,
 
         [Parameter(Mandatory = $false, Position = 30)]
-        [bool] $NCMLogOutbound = $false,
+        [bool] $NCMIncludeUAM = $false,
 
         [Parameter(Mandatory = $false, Position = 31)]
-        [int] $NCMInterval = 5,
+        [bool] $NCMLogListeners = $false,
 
         [Parameter(Mandatory = $false, Position = 32)]
-        [bool] $UAMLogonActivity = $false,
+        [bool] $NCMLogInbound = $false,
 
         [Parameter(Mandatory = $false, Position = 33)]
-        [bool] $UAMProcessActivity = $false,
+        [bool] $NCMLogOutbound = $false,
 
         [Parameter(Mandatory = $false, Position = 34)]
-        [bool] $UAMSessionActivity = $false,
+        [int] $NCMInterval = 5,
 
         [Parameter(Mandatory = $false, Position = 35)]
-        [int] $UAMInterval = 5,
+        [bool] $UAMLogonActivity = $false,
 
         [Parameter(Mandatory = $false, Position = 36)]
-        [int] $UAMHistory = 1,
+        [bool] $UAMProcessActivity = $false,
 
         [Parameter(Mandatory = $false, Position = 37)]
+        [bool] $UAMSessionActivity = $false,
+
+        [Parameter(Mandatory = $false, Position = 38)]
+        [int] $UAMInterval = 5,
+
+        [Parameter(Mandatory = $false, Position = 39)]
+        [int] $UAMHistory = 1,
+
+        [Parameter(Mandatory = $false, Position = 40)]
         [switch] $PassThru,
 
 
-        [Parameter(Mandatory = $false, Position = 38)]
+        [Parameter(Mandatory = $false, Position = 41)]
         [ValidateNotNull()]
         [pscredential] $Credential = $LrtConfig.LogRhythm.ApiKey
     )
@@ -217,7 +216,7 @@ Function Update-LrAgentPending {
         }
 
         # Verify version
-        if ($LrtConfig.LogRhythm.Version -match '7.[0-8].\d') {
+        if ($LrtConfig.LogRhythm.Version -match '7\.[0-8]\.\d+') {
             $ErrorObject.Error = $true
             $ErrorObject.Code = "404"
             $ErrorObject.Type = "Cmdlet not supported."
@@ -311,13 +310,6 @@ Function Update-LrAgentPending {
             # Request URL
             $RequestUrl = $BaseUrl + "/lr-admin-api/agents-request/$Guid/associate"
         } else {
-            $ErrorObject.Error = $true
-            $ErrorObject.Code = 500
-            $ErrorObject.Raw = $SystemMonitorId
-            $ErrorObject.Type = "Accept.Deny"
-            $ErrorObject.Note = "Accepting an agent is currently not available in this version of LogRhythm.Tools."
-            return $ErrorObject
-
             $Body = [PSCustomObject]@{
                 AgentType = 'Windows'
                 overrideEntityForNewHosts = $OverrideEntityForNewHosts

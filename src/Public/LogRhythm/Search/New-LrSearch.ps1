@@ -480,9 +480,9 @@ Function New-LrSearch {
             if ($Param3Results.IsValid -eq $false) {
                 Return "Unable to lookup Parameter 3 - Metadata Type: $Param3MetaField"
             } else {
-                $_param3FilterType = $Param1Results.id
-                $_param3ValueType = $Param1Results.ValueTypeEnum
-                $_param3ValueName = $Param1Results.DisplayName
+                $_param3FilterType = $Param3Results.id
+                $_param3ValueType = $Param3Results.ValueTypeEnum
+                $_param3ValueName = $Param3Results.DisplayName
             }
         }
 

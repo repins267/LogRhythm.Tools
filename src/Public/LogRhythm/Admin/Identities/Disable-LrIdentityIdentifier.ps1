@@ -7,7 +7,7 @@ Function Disable-LrIdentityIdentifier {
     .SYNOPSIS
         Retire an Identifier from an existing TrueIdentity based on TrueID # and Identifier #.
     .DESCRIPTION
-        Retire-LrIdentityIdentifier returns an object containing the detailed results of the retired Identifier.
+        Disable-LrIdentityIdentifier returns an object containing the detailed results of the disabled Identifier.
     .PARAMETER Credential
         PSCredential containing an API Token in the Password field.
     .PARAMETER IdentityId
@@ -21,7 +21,7 @@ Function Disable-LrIdentityIdentifier {
     .EXAMPLE
         Identity and Identifier exists and IdentifierStatus Active prior to cmdlet execution:
 
-        PS C:\> Retire-LrIdentityIdentifier -IdentityId 1 -IdentifierId 50 -PassThru
+        PS C:\> Disable-LrIdentityIdentifier -IdentityId 1 -IdentifierId 50 -PassThru
         ---
         identifierID identifierType value                      recordStatus
         ------------ -------------- -----                      ------------
@@ -29,7 +29,7 @@ Function Disable-LrIdentityIdentifier {
     .EXAMPLE
         Identity and Identifier exists and IdentityStatus Retired prior to cmdlet execution:
 
-        PS C:\> Retire-LrIdentityIdentifier -IdentityId 1 -IdentifierId 50 -PassThru
+        PS C:\> Disable-LrIdentityIdentifier -IdentityId 1 -IdentifierId 50 -PassThru
         ---
         IsPresent           : True
         IdentifierId        : 50
@@ -44,7 +44,7 @@ Function Disable-LrIdentityIdentifier {
     .EXAMPLE
         Identity does not exist:
         
-        PS C:\> Retire-LrIdentityIdentifier -IdentityId 77 -IdentifierId 50 -PassThru
+        PS C:\> Disable-LrIdentityIdentifier -IdentityId 77 -IdentifierId 50 -PassThru
         ---
         IsPresent           : False
         IdentifierId        : 50
@@ -59,7 +59,7 @@ Function Disable-LrIdentityIdentifier {
     .EXAMPLE
         Identifier does not exist:
 
-        Retire-LrIdentityIdentifier -IdentityId 1 -IdentifierId 77 -PassThru
+        Disable-LrIdentityIdentifier -IdentityId 1 -IdentifierId 77 -PassThru
         ---
         IsPresent           : False
         IdentifierId        : 77
@@ -71,7 +71,7 @@ Function Disable-LrIdentityIdentifier {
         IdentityStatus      : Active
         IdentityDisplayName : marcus.burnett@fabrikam.com
     .EXAMPLE
-        Retire-LrIdentityIdentifier -IdentityId 1 -IdentifierId 77
+        Disable-LrIdentityIdentifier -IdentityId 1 -IdentifierId 77
 
     .NOTES
         LogRhythm-API        

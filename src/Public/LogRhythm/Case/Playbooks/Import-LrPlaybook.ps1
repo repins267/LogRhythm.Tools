@@ -1,8 +1,6 @@
 using namespace System
 using namespace System.IO
-using namespace System.Text
 using namespace System.Collections.Generic
-using namespace System.Net.Http
 
 Function Import-LrPlaybook {
     <#
@@ -15,12 +13,16 @@ Function Import-LrPlaybook {
         Note: You can bypass the need to provide a Credential by setting
         the preference variable $LrtConfig.LogRhythm.ApiKey
         with a valid Api Token.
+    .PARAMETER Playbook
+        Full file path to the LogRhythm Playbook file to import.
+    .PARAMETER PassThru
+        Switch paramater that will enable the return of the output object from the cmdlet.
     .INPUTS
-        [System.Object] "Id" ==> [Id] : The ID of the Case to modify.
+        [System.String] "Playbook" ==> [Playbook] : Full path to the playbook file.
     .OUTPUTS
         PSCustomObject representing the added playbook.
     .EXAMPLE
-        PS C:\> 
+        PS C:\> Import-LrPlaybook -Playbook "C:\Playbooks\MyPlaybook.lrp" -PassThru
     .NOTES
         LogRhythm-API
     .LINK
@@ -29,32 +31,33 @@ Function Import-LrPlaybook {
 
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory = $false, Position = 0)]
-        [ValidateNotNull()]
-        [pscredential] $Credential = $LrtConfig.LogRhythm.ApiKey,
+        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, Position = 0)]
+        [string] $Playbook,
 
-        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 1)]
-        [string] $Playbook
+        [Parameter(Mandatory = $false, Position = 1)]
+        [switch] $PassThru,
+
+        [Parameter(Mandatory = $false, Position = 2)]
+        [ValidateNotNull()]
+        [pscredential] $Credential = $LrtConfig.LogRhythm.ApiKey
     )
 
 
     Begin {
         $Me = $MyInvocation.MyCommand.Name
-        
+
         $BaseUrl = $LrtConfig.LogRhythm.BaseUrl
         $Token = $Credential.GetNetworkCredential().Password
 
         # Request Headers
         $Headers = [Dictionary[string,string]]::new()
         $Headers.Add("Authorization", "Bearer $Token")
-        $Headers.Add("Content-Type","multipart/form-data")
-        #$Headers.Add("Boundary","$Boundary")
 
         # Request Method
         $Method = $HttpMethod.Post
 
-        # Int reference
-        $_int = 1
+        # Check preference requirements for self-signed certificates and set enforcement for Tls1.2
+        Enable-TrustAllCertsPolicy
     }
 
 
@@ -69,10 +72,10 @@ Function Import-LrPlaybook {
             Value                 =   $Playbook
         }
 
-        if (Test-Path -path $Playbook) {
-            $FileName = split-path $Playbook -leaf
+        if (Test-Path -Path $Playbook) {
+            $FileName = Split-Path $Playbook -Leaf
         } else {
-            $ErrorObject.Error = $true 
+            $ErrorObject.Error = $true
             $ErrorObject.Note = "Provided path is not resolvable.  Please provide a full path to the LogRhythm Playbook."
             return $ErrorObject
         }
@@ -80,70 +83,31 @@ Function Import-LrPlaybook {
         $RequestUrl = $BaseUrl + "/lr-case-api/playbooks/import"
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
-        if (-not $ContentType)
-        {
-            Add-Type -AssemblyName System.Web
+        # Build multipart/form-data body
+        $Boundary = [System.Guid]::NewGuid().ToString()
+        $FileContent = [System.IO.File]::ReadAllText($Playbook)
+        $LF = "`r`n"
 
-            $mimeType = [System.Web.MimeMapping]::GetMimeMapping($File)
-            
-            if ($mimeType)
-            {
-                $ContentType = $mimeType
-            }
-            else
-            {
-                $ContentType = "application/octet-stream"
-            }
+        $Body = (
+            "--$Boundary",
+            "Content-Disposition: form-data; name=`"file`"; filename=`"$FileName`"",
+            "Content-Type: application/octet-stream",
+            "",
+            $FileContent,
+            "--$Boundary--"
+        ) -join $LF
+
+        $ContentType = "multipart/form-data; boundary=$Boundary"
+
+        # Send Request
+        $Response = Invoke-RestAPIMethod -Uri $RequestUrl -Headers $Headers -Method $Method -Body $Body -ContentType $ContentType -Origin $Me
+        if (($null -ne $Response.Error) -and ($Response.Error -eq $true)) {
+            return $Response
         }
 
-        $httpClientHandler = New-Object System.Net.Http.HttpClientHandler
-        $httpClient = New-Object System.Net.Http.Httpclient $httpClientHandler
-        $httpClient.DefaultRequestHeaders.add("Authorization", "Bearer $Token")
-        $packageFileStream = New-Object System.IO.FileStream @($File, [System.IO.FileMode]::Open)
-        $contentDispositionHeaderValue = New-Object System.Net.Http.Headers.ContentDispositionHeaderValue "form-data"
-	    $contentDispositionHeaderValue.Name = "file"
-        $contentDispositionHeaderValue.FileName = (Split-Path $File -leaf)
-        
-        $streamContent = New-Object System.Net.Http.StreamContent $packageFileStream
-        $streamContent.Headers.ContentDisposition = $contentDispositionHeaderValue
-        $streamContent.Headers.ContentType = New-Object System.Net.Http.Headers.MediaTypeHeaderValue $ContentType
-        
-        $content = New-Object System.Net.Http.MultipartFormDataContent
-        $content.Add($streamContent)
-
-
-        try
-        {
-			$response = $httpClient.PostAsync($RequestUrl, $content).Result
-
-			if (!$response.IsSuccessStatusCode)
-			{
-				$responseBody = $response.Content.ReadAsStringAsync().Result
-				$errorMessage = "Status code {0}. Reason {1}. Server reported the following message: {2}." -f $response.StatusCode, $response.ReasonPhrase, $responseBody
-
-				throw [System.Net.Http.HttpRequestException] $errorMessage
-			}
-
-			return $response.Content.ReadAsStringAsync().Result
+        if ($PassThru) {
+            return $Response
         }
-        catch [Exception]
-        {
-			$PSCmdlet.ThrowTerminatingError($_)
-        }
-        finally
-        {
-            if($null -ne $httpClient)
-            {
-                $httpClient.Dispose()
-            }
-
-            if($null -ne $response)
-            {
-                $response.Dispose()
-            }
-        }
-
-        return $Response
     }
 
 

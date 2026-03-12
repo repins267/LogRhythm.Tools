@@ -7,7 +7,7 @@ Function Invoke-LrSearchExample {
     .SYNOPSIS
         Initiate a PIE Msg search in the LogRhythm SIEM environment.  Requires LogRhythm 7.5.0+.
     .DESCRIPTION
-        Invoke-PIEMsgSearch initiates a new search request.
+        Invoke-LrSearchExample initiates a new search request.
 
         To retrieve search results reference cmdlet: Get-LrSearchResults.
     .PARAMETER Credential
@@ -20,7 +20,7 @@ Function Invoke-LrSearchExample {
     .OUTPUTS
         PSCustomObject representing the new search task, its status, and the associated TaskId used to retrieve results.
     .EXAMPLE
-        PS C:\> New-LrSearch
+        PS C:\> Invoke-LrSearchExample
         ----
         StatusCode      : 200
         StatusMessage   : Success

@@ -61,6 +61,10 @@ Function Remove-LrCasePlaybook {
 
 
         [Parameter(Mandatory = $false, Position = 2)]
+        [switch] $PassThru,
+
+
+        [Parameter(Mandatory = $false, Position = 3)]
         [ValidateNotNull()]
         [pscredential] $Credential = $LrtConfig.LogRhythm.ApiKey
     )
@@ -79,6 +83,9 @@ Function Remove-LrCasePlaybook {
 
         # Request URI
         $Method = $HttpMethod.Delete
+
+        # Check preference requirements for self-signed certificates and set enforcement for Tls1.2
+        Enable-TrustAllCertsPolicy
     }
 
 

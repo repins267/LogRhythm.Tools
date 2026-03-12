@@ -1,6 +1,6 @@
 {
-  "Version": "1.4.0",
-  "ReleaseTag": "Interested Siamese Fighting Fish",
+  "Version": "1.5.0",
+  "ReleaseTag": "Tenacious Peregrine Falcon",
   "Name": "LogRhythm.Tools",
   "Psm1": "LogRhythm.Tools.psm1",
   "Psd1": "LogRhythm.Tools.psd1",
@@ -30,5 +30,6 @@
     "Shodan"
   ],
   "ProjectUri": "https://github.com/LogRhythm-Tools/LogRhythm.Tools",
-  "Assemblies": []
+  "Assemblies": [],
+  "ReleaseNotes": "v1.5.0 - LogRhythm 7.23 GA API Coverage\n\nPhase 1 - Compliance Audit:\n- Fixed 8 logic bugs, 3 critical violations, 27 high priority, 18 medium/low issues across 50+ existing cmdlets\n- Renamed Run-LrTrueIdentityMerger to Invoke-LrTrueIdentityMerger\n- Standardized Invoke-RestAPIMethod -Origin $Me across all cmdlets\n- Added Enable-TrustAllCertsPolicy to all Begin blocks\n- Added -PassThru to all mutating cmdlets\n\nPhase 2 - New Cmdlets (~120 new):\n- Admin/MPERules: 10 cmdlets (policy/rule CRUD, summary, status, policy-rule management)\n- Admin/LogSources/LSV: 10 cmdlets (LSV template CRUD, template items, log source virtualization)\n- Admin/Beats: 8 cmdlets (beat CRUD, types, templates, status, heartbeat)\n- Admin/OpenCollectors: 7 cmdlets (OC CRUD, status, heartbeat, beats listing)\n- Admin/LogSources: 9 cmdlets (pending log source actions, matching, status)\n- Admin/Users: 16 cmdlets (persons, user logins, user profiles, privileges, permissions)\n- Admin/Agents: 3 cmdlets (agent create, update, partial update)\n- Admin/Hosts: 3 cmdlets (batch update, host roles)\n- Admin/Entities: 3 cmdlets (entity/host/network import)\n- Admin/Networks: 1 cmdlet (batch update)\n- Admin/NotificationGroups: 5 cmdlets (group CRUD, user management)\n- Admin/MsgSourceTypes: 5 cmdlets (message source type CRUD)\n- Admin/Licenses: 2 cmdlets (license info, entitlements)\n- Admin/Identities: 4 cmdlets (bulk add, photo, merged, list lookup)\n- Admin/Location: 1 cmdlet (location details)\n- Alarms: 1 cmdlet (alarm URL, 7.7.0+)\n- Case/Evidence: 12 cmdlets (file/event evidence, progress, download, logs index, file upload)\n- Case/Playbooks: 2 cmdlets (export, partial update)\n- Case/Attachments: 8 cmdlets (playbook/case-playbook attachment CRUD and download)\n- Case/History: 1 cmdlet (global history)\n- Case/General: 4 cmdlets (logs indexes, capabilities, feature flags, log maintenance)\n- Case/Metrics: 1 cmdlet (case metrics update)\n- AIE/Engine: 3 cmdlets (rule import, status update, service restart)\n- Metrics: 2 cmdlets (log volume, TTL details)\n\nPhase 6 - Module Configuration Cmdlets:\n- Initialize-LrtConfiguration: guided first-time setup (replaces separate Setup.ps1 workflow)\n- Get-LrtConfiguration: display current config with secrets masked\n- Set-LrtConfiguration: modify and persist config values per service\n- Test-LrtConfiguration: validate config and test API connectivity\n- Module now loads gracefully without pre-existing config"
 }

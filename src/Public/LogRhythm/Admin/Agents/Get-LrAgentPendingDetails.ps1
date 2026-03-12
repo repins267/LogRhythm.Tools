@@ -58,9 +58,6 @@ Function Get-LrAgentPendingDetails {
         # Define HTTP Method
         $Method = $HttpMethod.Get
 
-        # Value Testing Paramater
-        $_int = 0
-
         # Check preference requirements for self-signed certificates and set enforcement for Tls1.2 
         Enable-TrustAllCertsPolicy
     }

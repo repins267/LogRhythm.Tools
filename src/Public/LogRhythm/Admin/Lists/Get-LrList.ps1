@@ -66,8 +66,9 @@ Function Get-LrList {
     Begin {
         $Me = $MyInvocation.MyCommand.Name
 
-        # Request Setup 
+        # Request Setup
         $BaseUrl = $LrtConfig.LogRhythm.BaseUrl
+        Enable-TrustAllCertsPolicy
         $Token = $Credential.GetNetworkCredential().Password
 
         # Define HTTP Headers

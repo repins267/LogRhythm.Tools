@@ -107,7 +107,7 @@ Function Get-LrIdentityIdentifierConflicts {
     Process { 
         while ($SearchingIdententities -eq $True) {
             $Offset = ($Page - 1) * $Count
-            $RequestUrl = $BaseUrl + "/identities?count=" + $Count + "&offset=" + $Offset
+            $RequestUrl = $BaseUrl + "/lr-admin-api/identities?count=" + $Count + "&offset=" + $Offset
             if ($ShowRetired) { $RequestUrl += "&showRetired=true" }
             if ($Filter) { $RequestUrl += "&$Filter" }
             

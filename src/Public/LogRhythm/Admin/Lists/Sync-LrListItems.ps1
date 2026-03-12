@@ -270,13 +270,13 @@ Function Sync-LrListItems {
                         }
                     }
                 } else {
-                    if ($ItemType) {
+                    if ($OutObject.ListType) {
                         Try {
                             Remove-LrListItem -name $OutObject.ListGuid -Value $RemoveList -ItemType $OutObject.ListType
                         } Catch {
                             $ErrorObject.Error = $true
                             $ErrorObject.Note = "Failed to submit removal entries."
-                            $ErrorObject.Value = $RemoveArray
+                            $ErrorObject.Value = $RemoveList
                         }
                     } else {
                         Try {
@@ -284,9 +284,9 @@ Function Sync-LrListItems {
                         } Catch {
                             $ErrorObject.Error = $true
                             $ErrorObject.Note = "Failed to submit removal entries."
-                            $ErrorObject.Value = $RemoveArray
+                            $ErrorObject.Value = $RemoveList
                         }
-                    } 
+                    }
                 }
             } else {
                 # Set quantity of removed values
@@ -318,17 +318,17 @@ Function Sync-LrListItems {
                         }
                     }
                 } else {
-                    if ($ItemType) {
+                    if ($OutObject.ListType) {
                         Try {
                             if ($_isPattern) {
-                                Add-LrListItem -name $OutObject.ListGuid -Value $AddArray -ItemType $OutObject.ListType -IsPattern
+                                Add-LrListItem -name $OutObject.ListGuid -Value $AddList -ItemType $OutObject.ListType -IsPattern
                             } else {
-                                Add-LrListItem -name $OutObject.ListGuid -Value $AddArray -ItemType $OutObject.ListType
+                                Add-LrListItem -name $OutObject.ListGuid -Value $AddList -ItemType $OutObject.ListType
                             }
                         } Catch {
                             $ErrorObject.Error = $true
                             $ErrorObject.Note = "Failed to submit addition entries."
-                            $ErrorObject.Value = $AddArray
+                            $ErrorObject.Value = $AddList
                         }
                     } else {
                         Try {

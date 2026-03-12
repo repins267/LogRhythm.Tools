@@ -135,6 +135,10 @@ Function Update-LrCasePlaybookProcedure {
 
 
         [Parameter(Mandatory = $false, Position = 8)]
+        [switch] $PassThru,
+
+
+        [Parameter(Mandatory = $false, Position = 9)]
         [ValidateNotNull()]
         [pscredential] $Credential = $LrtConfig.LogRhythm.ApiKey
     )
@@ -327,8 +331,9 @@ Function Update-LrCasePlaybookProcedure {
             return $Response
         }
 
-        # Return all responses.
-        return $Response
+        if ($PassThru) {
+            return $Response
+        }
     }
 
     End { }

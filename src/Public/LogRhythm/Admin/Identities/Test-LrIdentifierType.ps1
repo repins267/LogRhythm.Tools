@@ -6,7 +6,7 @@ Function Test-LrIdentifierType {
     .SYNOPSIS
         Validates provided LogRhythm List type is a valid List type.
     .DESCRIPTION
-        The Test-LrListType cmdlet displays information about a given LogRhythm Unique 
+        The Test-LrIdentifierType cmdlet displays information about a given LogRhythm Unique
         Case Identifier.
     .PARAMETER IdentifierValue
         The 

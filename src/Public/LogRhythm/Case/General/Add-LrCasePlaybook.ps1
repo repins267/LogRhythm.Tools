@@ -83,6 +83,9 @@ Function Add-LrCasePlaybook {
 
         # Request URI
         $Method = $HttpMethod.Post
+
+        # Check preference requirements for self-signed certificates and set enforcement for Tls1.2
+        Enable-TrustAllCertsPolicy
     }
 
 

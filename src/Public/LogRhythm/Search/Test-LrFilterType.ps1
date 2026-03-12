@@ -6,7 +6,7 @@ Function Test-LrFilterType {
     .SYNOPSIS
         Validates provided LogRhythm List type is a valid List type.
     .DESCRIPTION
-        The Test-LrListType cmdlet displays information about a given LogRhythm Unique 
+        The Test-LrFilterType cmdlet displays information about a given LogRhythm Unique
         Case Identifier.
     .PARAMETER Id
         Test if List Type is valid based on ID property.
@@ -17,7 +17,7 @@ Function Test-LrFilterType {
     .OUTPUTS
         System.Object with IsValid, IdentifierValue, IdentifierType
     .EXAMPLE
-        C:\PS> Test-LrIdentifierType "commonevent"
+        C:\PS> Test-LrFilterType "commonevent"
         IsValid    IdentifierValue    IdentifierType
         -------    ---------------    --------------
         True       tstr@example.com   Email

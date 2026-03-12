@@ -2,7 +2,7 @@ using namespace System
 using namespace System.IO
 using namespace System.Collections.Generic
 
-Function Run-LrTrueIdentityConflictMerger {
+Function Invoke-LrTrueIdentityConflictMerger {
     <#
     .SYNOPSIS
         Merge a list of Identifier Conflicts for LogRhythm 7.4.
@@ -16,17 +16,17 @@ Function Run-LrTrueIdentityConflictMerger {
         Only search for conflicts within this Root EntityId
         Recommended when IdentityEntitySegregation has been enabled in the Data Processor(s)
     .EXAMPLE
-        PS C:\> Run-LrTrueIdentityMerger
+        PS C:\> Invoke-LrTrueIdentityConflictMerger
         ----
         This cmdlet is currently under development.
     .NOTES
-        LogRhythm-API        
+        LogRhythm-API
     .LINK
         https://github.com/LogRhythm-Tools/LogRhythm.Tools
     #>
-    
+
     [CmdletBinding()]
-    param( 
+    param(
         [Parameter(Mandatory = $false, ValueFromPipeline = $true, Position = 0)]
         [long] $EntityId = 1,
 
@@ -40,13 +40,16 @@ Function Run-LrTrueIdentityConflictMerger {
 
 
         [Parameter(Mandatory = $false, Position = 3)]
+        [switch] $PassThru,
+
+        [Parameter(Mandatory = $false, Position = 4)]
         [ValidateNotNull()]
         [pscredential] $Credential = $LrtConfig.LogRhythm.ApiKey
     )
 
     Begin {
         $Me = $MyInvocation.MyCommand.Name
-        
+
         $Version = 0.1
         function Show-Menu
         {
@@ -91,7 +94,7 @@ Function Run-LrTrueIdentityConflictMerger {
             }
             until ($input -eq 'q')
         ForEach ($Conflict in $IdentityConflicts) {
-        
+
         }
 
     }

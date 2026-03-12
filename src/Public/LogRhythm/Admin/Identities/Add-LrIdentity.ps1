@@ -332,8 +332,8 @@ Function Add-LrIdentity {
             if ($Identifier5Type -ne "Email") {
                 $Identifier = @{
                     identifierType = "Login"
-                    value = $Identifier2Value
-                } 
+                    value = $Identifier5Value
+                }
                 if ($Identifiers -notcontains $Identifier) {
                     $Identifiers.add($Identifier)
                 }

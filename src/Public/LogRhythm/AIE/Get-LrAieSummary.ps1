@@ -7,16 +7,16 @@ Function Get-LrAieSummary {
     .SYNOPSIS
         Get AIE Drilldown results for a LogRhythm Alert.
     .DESCRIPTION
-        The Get-LrAieDrilldown cmdlet retrieves drilldown results
+        The Get-LrAieSummary cmdlet retrieves drilldown results
         (logs) associated with a LogRhythm Alarm.
 
         In some cases it may take several minutes for an alarm to be
-        updated with drilldown logs. When executing Get-LrAieDrilldown
+        updated with drilldown logs. When executing Get-LrAieSummary
         from a SmartResponse action, drilldown data may not be available
         for a short time while the Drilldown Cache Service is in the 
         process of getting logs from data indexers.
 
-        To mitigate this, Get-LrAieDrilldown will reattempt the request 
+        To mitigate this, Get-LrAieSummary will reattempt the request 
         (18) times, waiting (10 seconds) between each attempt. These
         values can be modified by speciftying the RetryAttempts and
         RetryWaitSeconds parameters. This should be sufficient for the
@@ -45,7 +45,7 @@ Function Get-LrAieSummary {
     .OUTPUTS
         PSCustomObject representing the Drilldown results.
     .EXAMPLE
-        PS C:\> Get-LrAieDrilldown -Credential $token -AlarmId 2261993
+        PS C:\> Get-LrAieSummary -Credential $token -AlarmId 2261993
         ---
         AlarmID           : System.Int32
         AlarmGuid         : System.String (guid)

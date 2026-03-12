@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    SmartResponse Plugin Registration
+    Deploy to: C:\Program Files\LogRhythm\SmartResponse Plugins\
+
+    This registers Invoke-HostIsolationResponse.ps1 as a SmartResponse action
+    available in the LogRhythm deployment manager and alarm rules.
+-->
+<remaliases>
+    <remalias name="LRT: Host Isolation Response" canaliashostname="false">
+        <actions>
+            <action name="Isolate Host" command="powershell.exe">
+                <argumentslist>
+                    <arguments name="HostName" input="true" />
+                    <arguments name="CaseId" input="true" />
+                    <arguments name="AlarmId" input="true" />
+                </argumentslist>
+                <commandarguments>-ExecutionPolicy Bypass -File "C:\Program Files\LogRhythm\SmartResponse Plugins\Invoke-HostIsolationResponse.ps1" -HostName "[HostName]" -AlarmId [AlarmId]</commandarguments>
+            </action>
+        </actions>
+    </remalias>
+</remaliases>

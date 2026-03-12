@@ -80,15 +80,15 @@ Function Update-LrEntity {
 
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, Position = 1)]
+        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, Position = 0)]
         [string] $Id,
 
 
-        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 0)]
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 1)]
         [string] $ParentEntityName,
 
 
-        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 1)]
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 2)]
         [string] $Name,
 
         
@@ -96,7 +96,7 @@ Function Update-LrEntity {
         [string] $Abbreviation,
 
 
-        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true,  Position = 4)]
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 4)]
         [string] $ShortDesc,
 
 
@@ -108,7 +108,7 @@ Function Update-LrEntity {
         [ValidateSet('retired','active', ignorecase=$true)]
         [string] $RecordStatus = "Active",
 
-        
+
         [Parameter(Mandatory = $false, Position = 7)]
         [switch] $PassThru,
 

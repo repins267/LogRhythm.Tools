@@ -28,7 +28,11 @@ Function Start-LrEchoUseCase {
 
         [Parameter(Mandatory = $false, ValueFromPipeline = $true, Position = 1)]
         [ValidateNotNull()]
-        [int] $Id
+        [int] $Id,
+
+
+        [Parameter(Mandatory = $false, Position = 2)]
+        [switch] $PassThru
     )
 
     Begin {
@@ -65,7 +69,9 @@ Function Start-LrEchoUseCase {
             return $Response
         }
 
-        Return $Response
+        if ($PassThru) {
+            return $Response
+        }
     }
 
     End { }

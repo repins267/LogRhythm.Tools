@@ -55,7 +55,11 @@ Function Add-LrCaseAssociatedCase {
 
         [Parameter( Mandatory = $true, Position = 2)]
         [ValidateNotNull()]
-        [int32[]] $Ids
+        [int32[]] $Ids,
+
+
+        [Parameter(Mandatory = $false, Position = 3)]
+        [switch] $PassThru
     )
 
 
@@ -72,6 +76,9 @@ Function Add-LrCaseAssociatedCase {
 
         # Request URI
         $Method = $HttpMethod.Post
+
+        # Check preference requirements for self-signed certificates and set enforcement for Tls1.2
+        Enable-TrustAllCertsPolicy
     }
 
 

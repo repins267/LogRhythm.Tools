@@ -1,5 +1,27 @@
-function Get-LrLogSourceTypeDetails
-{
+using namespace System
+using namespace System.IO
+using namespace System.Collections.Generic
+
+Function Get-LrLogSourceTypeDetails {
+    <#
+    .SYNOPSIS
+        Retrieve details for a specific log source type from LogRhythm.
+    .DESCRIPTION
+        Get-LrLogSourceTypeDetails returns detailed information about a single
+        log source type by its ID from the Admin API.
+    .PARAMETER Id
+        The ID of the log source type to retrieve.
+    .PARAMETER Credential
+        PSCredential containing an API Token in the Password field.
+    .OUTPUTS
+        PSCustomObject representing the LogRhythm log source type details.
+    .EXAMPLE
+        PS C:\> Get-LrLogSourceTypeDetails -Id 1001
+    .NOTES
+        LogRhythm-API
+    .LINK
+        https://github.com/LogRhythm-Tools/LogRhythm.Tools
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 0)]

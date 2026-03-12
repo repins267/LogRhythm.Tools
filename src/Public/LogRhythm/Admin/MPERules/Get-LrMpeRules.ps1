@@ -75,7 +75,7 @@ Function Get-LrMpeRules {
         }
 
         # Verify version
-        if ($LrtConfig.LogRhythm.Version -match '7\.[0-8]\.\d+') {
+        if ($LrtConfig.LogRhythm.Version -match '7\.[0-4]\.\d+') {
             $ErrorObject.Error = $true
             $ErrorObject.Code = "404"
             $ErrorObject.Type = "Cmdlet not supported."

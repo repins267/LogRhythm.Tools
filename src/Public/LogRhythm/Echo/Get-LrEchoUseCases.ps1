@@ -42,17 +42,23 @@ Function Get-LrEchoUseCases {
 
         [Parameter(Mandatory = $false, ValueFromPipeline = $false, Position = 3)]
         [ValidateNotNull()]
-        [switch] $Exact
+        [switch] $Exact,
+
+
+        [Parameter(Mandatory = $false, Position = 4)]
+        [ValidateNotNull()]
+        [pscredential] $Credential = $LrtConfig.LogRhythm.ApiKey
     )
                                                                     
     Begin {
         # Request Setup
         $Me = $MyInvocation.MyCommand.Name
         $BaseUrl = $LrtConfig.LogRhythmEcho.BaseUrl
+        $Token = $Credential.GetNetworkCredential().Password
 
         # Define HTTP Headers
         $Headers = [Dictionary[string,string]]::new()
-        #$Headers.Add("Authorization", "Bearer $Token")
+        $Headers.Add("Authorization", "Bearer $Token")
         
         # Define HTTP Method
         $Method = $HttpMethod.Get

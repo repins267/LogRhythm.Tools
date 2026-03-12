@@ -9,7 +9,7 @@ Function Get-LrAgentLogSources {
         
         This cmdlet is only available for LogRhythm SIEM's with version 7.5.0 and greater.
     .DESCRIPTION
-        Get-LrHostLogSources returns all log sources for an Agent, including retired log sources, unless filtered out.
+        Get-LrAgentLogSources returns all log sources for an Agent, including retired log sources, unless filtered out.
     .PARAMETER Credential
         PSCredential containing an API Token in the Password field.
     .PARAMETER Id

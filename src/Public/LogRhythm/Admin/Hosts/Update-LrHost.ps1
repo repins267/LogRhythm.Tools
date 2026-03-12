@@ -197,8 +197,10 @@ Function Update-LrHost {
         [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName=$true, Position = 11)]
         [int32]$LocationId,
 
+        [Parameter(Mandatory = $false, Position = 12)]
+        [switch] $LocationLookup,
 
-        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 12)]
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 13)]
         [ValidateSet(
             'unknown',
             'other',
@@ -220,24 +222,24 @@ Function Update-LrHost {
         [string] $OS,
 
 
-        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 13)]
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 14)]
         [string] $OSVersion,
 
 
-        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 14)]
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 15)]
         [bool] $UseEventlogCredentials = $false,
 
-        
-        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 15)]
+
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 16)]
         [ValidateSet('server','none','desktop', ignorecase=$true)]
         [string] $OSType,
 
-        
-        [Parameter(Mandatory = $false, Position = 16)]
+
+        [Parameter(Mandatory = $false, Position = 17)]
         [switch] $PassThru,
 
 
-        [Parameter(Mandatory = $false, Position = 17)]
+        [Parameter(Mandatory = $false, Position = 18)]
         [ValidateNotNull()]
         [pscredential] $Credential = $LrtConfig.LogRhythm.ApiKey
     )
@@ -261,7 +263,7 @@ Function Update-LrHost {
         Enable-TrustAllCertsPolicy
 
         # Define LogRhythm Version
-        $LrVersion = $LrtConfig.LRDeployment.Version
+        $LrVersion = $LrtConfig.LogRhythm.Version
         
         # Integer Reference
         [int32] $_int = 1

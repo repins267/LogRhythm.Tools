@@ -33,7 +33,9 @@ function Get-LrCaseEarliestEvidence {
     .LINK
         https://github.com/LogRhythm-Tools/LogRhythm.Tools
     #>
-	param(
+
+    [CmdletBinding()]
+    Param(
         [Parameter(
             Mandatory = $true, 
             ValueFromPipeline = $true, 
@@ -64,6 +66,9 @@ function Get-LrCaseEarliestEvidence {
         
         # Request Method
         $Method = $HttpMethod.Get
+
+        # Check preference requirements for self-signed certificates and set enforcement for Tls1.2
+        Enable-TrustAllCertsPolicy
     }
     
     Process {

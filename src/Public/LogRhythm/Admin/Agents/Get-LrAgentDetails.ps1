@@ -7,7 +7,7 @@ Function Get-LrAgentDetails {
     .SYNOPSIS
         Retrieve the details from a LogRhythm System Monitor agent.
     .DESCRIPTION
-        Get-LrHostDetails returns the details of the specified Agent.
+        Get-LrAgentDetails returns the details of the specified Agent.
     .PARAMETER Credential
         PSCredential containing an API Token in the Password field.
     .PARAMETER Id
@@ -199,10 +199,10 @@ Function Get-LrAgentDetails {
         # Define HTTP Method
         $Method = $HttpMethod.Get
 
-        # Value Testing Paramater
-        $_int = 0
+        # Integer Reference
+        [int32] $_int = 0
 
-        # Check preference requirements for self-signed certificates and set enforcement for Tls1.2 
+        # Check preference requirements for self-signed certificates and set enforcement for Tls1.2
         Enable-TrustAllCertsPolicy
     }
 

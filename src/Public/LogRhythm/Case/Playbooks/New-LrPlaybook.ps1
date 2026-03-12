@@ -118,6 +118,9 @@ Function New-LrPlaybook {
         # Request Method
         $Method = $HttpMethod.Post
 
+        # Check preference requirements for self-signed certificates and set enforcement for Tls1.2
+        Enable-TrustAllCertsPolicy
+
         # Int reference
         $_int = 1
     }

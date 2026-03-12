@@ -6,6 +6,9 @@ Function Get-LrCaseLogsIndex {
     <#
     .SYNOPSIS
         Return a list log indexes associated with a specific LogRhythm Case.
+    .DESCRIPTION
+        Get-LrCaseLogsIndex retrieves the log index entries associated with a
+        specific case, including index state, creation dates, and rebuild status.
     .PARAMETER Id
         The Id of the case for which to retrieve Case Log Indexes from.
     .PARAMETER Credential

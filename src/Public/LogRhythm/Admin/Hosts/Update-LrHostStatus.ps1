@@ -90,7 +90,7 @@ Function Update-LrHostStatus {
             if ($ValidStatus.Contains($($Status.ToLower()))) {
                 $_status = (Get-Culture).TextInfo.ToTitleCase($Status)
             } else {
-                throw [ArgumentException] "Status [$StatusStatus] must be: active, or retired."
+                throw [ArgumentException] "Status [$Status] must be: active, or retired."
             }
         }
 

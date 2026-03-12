@@ -39,7 +39,7 @@ Function Test-LrListValue {
         [string] $Value,
 
 
-        [Parameter(Mandatory = $true, Position=0)]
+        [Parameter(Mandatory = $true, Position=1)]
         [ValidateNotNull()]
         [string] $Name
     )

@@ -170,7 +170,10 @@ Function New-LrHost {
         [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName=$true, Position = 10)]
         [int32]$LocationId,
 
-        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 11)]
+        [Parameter(Mandatory = $false, Position = 11)]
+        [switch] $LocationLookup,
+
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 12)]
         [ValidateSet(
             'unknown',
             'other',
@@ -192,23 +195,23 @@ Function New-LrHost {
         [string] $OS,
 
 
-        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 12)]
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 13)]
         [string] $OSVersion,
 
 
-        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 13)]
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 14)]
         [bool] $UseEventlogCredentials = $false,
 
 
-        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 14)]
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 15)]
         [ValidateSet('server','none','desktop', ignorecase=$true)]
         [string] $OSType = "server",
 
-        
-        [Parameter(Mandatory = $false, Position = 15)]
-        [switch] $PassThru,
 
         [Parameter(Mandatory = $false, Position = 16)]
+        [switch] $PassThru,
+
+        [Parameter(Mandatory = $false, Position = 17)]
         [ValidateNotNull()]
         [pscredential] $Credential = $LrtConfig.LogRhythm.ApiKey
     )

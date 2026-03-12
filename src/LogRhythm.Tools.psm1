@@ -22,11 +22,29 @@ $ConfigDirPath = Join-Path `
 
 $ConfigFileInfo = [System.IO.FileInfo]::new((Join-Path -Path $ConfigDirPath -ChildPath $PreferencesFileName))
 
-# Try to load the Config File from Local AppData or fail
+# Try to load the Config File from Local AppData or create defaults
 if ($ConfigFileInfo.Exists) {
     $LrtConfig = Get-Content -Path $ConfigFileInfo.FullName -Raw | ConvertFrom-Json
 } else {
-    throw [Exception] "Failed to load configuration from [$ConfigDirPath]. Run Setup.ps1 to create required configuration items."
+    # Create config directory and default config so module can load
+    if (-not (Test-Path $ConfigDirPath)) {
+        New-Item -Path $ConfigDirPath -ItemType Directory -Force | Out-Null
+    }
+    # Look for template in dist/common/ relative to module root
+    $TemplatePath = Join-Path -Path $PSScriptRoot -ChildPath "..\dist\common\$PreferencesFileName"
+    if (Test-Path $TemplatePath) {
+        Copy-Item -Path $TemplatePath -Destination $ConfigFileInfo.FullName -Force
+        $LrtConfig = Get-Content -Path $ConfigFileInfo.FullName -Raw | ConvertFrom-Json
+    } else {
+        # Minimal default config
+        $LrtConfig = [PSCustomObject]@{
+            General = [PSCustomObject]@{ CertPolicyRequired = $false }
+            Proxy = [PSCustomObject]@{ Required = $false; Host = ""; Port = ""; RequiresCredential = $false; Credential = "" }
+            LogRhythm = [PSCustomObject]@{ Version = "7.11.0"; BaseUrl = "https://[NOT_SET]:8501"; ApiKey = "" }
+        }
+        $LrtConfig | ConvertTo-Json -Depth 5 | Set-Content -Path $ConfigFileInfo.FullName -Encoding UTF8
+    }
+    Write-Warning "LogRhythm.Tools: No configuration found. Default config created at [$ConfigDirPath]. Run Initialize-LrtConfiguration for guided setup, or use Set-LrtConfiguration to configure individual services."
 }
 #endregion
 

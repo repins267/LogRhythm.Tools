@@ -208,7 +208,7 @@ Function Get-LrHosts {
 
         if ($Response.Count -eq $PageValuesCount) {
             Write-Verbose "[$Me]: Begin Pagination"
-            write-verbose "[$Me]: Response Count: $($Response.Count)  Page Value Count: $PageValuesCount"
+            Write-Verbose "[$Me]: Response Count: $($Response.Count)  Page Value Count: $PageValuesCount"
             DO {
                 # Increment Offset
                 $Offset = $Offset + 1

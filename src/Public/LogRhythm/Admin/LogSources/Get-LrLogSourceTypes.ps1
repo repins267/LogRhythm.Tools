@@ -1,5 +1,31 @@
-function Get-LrLogSourceTypes
-{
+using namespace System
+using namespace System.IO
+using namespace System.Collections.Generic
+
+Function Get-LrLogSourceTypes {
+    <#
+    .SYNOPSIS
+        Retrieve a list of log source types from LogRhythm.
+    .DESCRIPTION
+        Get-LrLogSourceTypes returns log source types from the Admin API,
+        with optional name filtering and pagination support.
+    .PARAMETER Name
+        Optional filter for log source type name.
+    .PARAMETER PageValuesCount
+        Number of results per page. Default 1000.
+    .PARAMETER PageCount
+        Page number to return. Default 1.
+    .PARAMETER Credential
+        PSCredential containing an API Token in the Password field.
+    .OUTPUTS
+        PSCustomObject representing LogRhythm log source types.
+    .EXAMPLE
+        PS C:\> Get-LrLogSourceTypes
+    .NOTES
+        LogRhythm-API
+    .LINK
+        https://github.com/LogRhythm-Tools/LogRhythm.Tools
+    #>
     [CmdletBinding()]
     Param(
         [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 0)]

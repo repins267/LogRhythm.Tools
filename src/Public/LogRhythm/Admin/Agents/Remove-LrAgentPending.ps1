@@ -32,6 +32,10 @@ Function Remove-LrAgentPending {
 
 
         [Parameter(Mandatory = $false, Position = 8)]
+        [switch] $PassThru,
+
+
+        [Parameter(Mandatory = $false, Position = 9)]
         [ValidateNotNull()]
         [pscredential] $Credential = $LrtConfig.LogRhythm.ApiKey
     )
@@ -66,7 +70,7 @@ Function Remove-LrAgentPending {
         }
 
         # Verify version
-        if ($LrtConfig.LogRhythm.Version -match '7.[0-8].\d') {
+        if ($LrtConfig.LogRhythm.Version -match '7\.[0-8]\.\d+') {
             $ErrorObject.Error = $true
             $ErrorObject.Code = "404"
             $ErrorObject.Type = "Cmdlet not supported."
@@ -107,6 +111,10 @@ Function Remove-LrAgentPending {
         # Send Request
         $Response = Invoke-RestAPIMethod -Uri $RequestUrl -Headers $Headers -Method $Method -Body $Body -Origin $Me
         if (($null -ne $Response.Error) -and ($Response.Error -eq $true)) {
+            return $Response
+        }
+
+        if ($PassThru) {
             return $Response
         }
     }
