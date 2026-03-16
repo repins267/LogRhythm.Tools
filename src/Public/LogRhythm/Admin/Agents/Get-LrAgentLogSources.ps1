@@ -272,7 +272,7 @@ Function Get-LrAgentLogSources {
         if ($Direction) {
             $ValidStatus = "ASC", "DESC"
             if ($ValidStatus.Contains($($Direction.ToUpper()))) {
-                if ($LrVersion -match '7\.[5-9]\.\d+') {
+                if ($LrVersion -match '7\.([5-9]|\d{2,})\.\d+') {
                     if($Direction.ToUpper() -eq "ASC") {
                         $_direction = "ascending"
                     } else {

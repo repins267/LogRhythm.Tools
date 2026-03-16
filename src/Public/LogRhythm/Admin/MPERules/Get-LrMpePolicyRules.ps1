@@ -109,7 +109,7 @@ Function Get-LrMpePolicyRules {
         }
 
         # Request URL
-        $RequestUrl = $BaseUrl + "/lr-admin-api/mpepolicies/" + $Id + "/mperules/" + $QueryString
+        $RequestUrl = $BaseUrl + "/lr-admin-api/mpepolicies/" + $Id + "/mpeRules/" + $QueryString
 
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
@@ -132,7 +132,7 @@ Function Get-LrMpePolicyRules {
                 # Apply to Query String
                 $QueryString = $QueryParams | ConvertTo-QueryString
                 # Update Query URL
-                $RequestUrl = $BaseUrl + "/lr-admin-api/mpepolicies/" + $Id + "/mperules/" + $QueryString
+                $RequestUrl = $BaseUrl + "/lr-admin-api/mpepolicies/" + $Id + "/mpeRules/" + $QueryString
                 Write-Verbose "[$Me]: Request URL: $RequestUrl"
                 # Retrieve Query Results
                 $PaginationResults = Invoke-RestAPIMethod -Uri $RequestUrl -Headers $Headers -Method $Method -Origin $Me

@@ -196,7 +196,7 @@ Function Update-LrEntity {
         # Check for RecordStatus Update
         if ($RecordStatus) {
             # Update RecordStatus for 7.5 API
-            if ($LrtConfig.LogRhythm.Version -match '7\.[5-9]\.\d+') {
+            if ($LrtConfig.LogRhythm.Version -match '7\.([5-9]|\d{2,})\.\d+') {
                 if ($RecordStatus -eq "new") {
                     $RecordStatus = "active"
                 }

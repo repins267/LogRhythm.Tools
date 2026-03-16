@@ -1,19 +1,53 @@
 [![Last Release](https://badgen.net/badge/release/v1.5.0/green)](https://github.com/LogRhythm-Tools/LogRhythm.Tools/releases)
 [![Dev Version](https://badgen.net/badge/dev/v1.5.0/green)](https://github.com/LogRhythm-Tools/LogRhythm.Tools/tree/development/)
 
-LogRhythm.Tools is a PowerShell module for interacting with LogRhythm APIs. The module is a powerful addition to a LogRhythm analyst's toolbox, and can be used interactively within PowerShell or as a framework for developing SmartResponse plugins - without requiring an understanding of LogRhythm's API layer.
+LogRhythm.Tools is a PowerShell module that provides a complete abstraction layer over the LogRhythm SIEM API surface. Instead of hand-crafting REST calls, managing authentication headers, handling pagination, or parsing error responses, analysts and developers work with native PowerShell cmdlets that return structured objects ready for the pipeline.
+
+### Why not just call the API directly?
+
+Every cmdlet in the module routes through `Invoke-RestAPIMethod`, a centralized API execution engine that handles the problems you'd otherwise solve yourself on every call:
+
+- **Automatic retry with backoff** — HTTP 429 (rate-limit) and transient 500 errors are retried up to 25 times with configurable delay, so bulk operations and SmartResponse plugins don't fail on momentary throttling.
+- **Structured error objects** — Failures return a consistent `[PSCustomObject]` with `.Error`, `.Code`, `.Note`, `.Origin`, `.Uri`, and `.Raw` properties. No unhandled exceptions, no guessing what went wrong — just inspect the object.
+- **Origin tracking** — Every request is tagged with the calling cmdlet name (e.g., `[Get-LrHosts]`), so when something fails in a complex pipeline or SmartResponse, the log tells you exactly which cmdlet made the call.
+- **TLS & certificate handling** — Self-signed certificates common in on-prem LogRhythm deployments are handled transparently via `Enable-TrustAllCertsPolicy`.
+- **Pagination** — List cmdlets automatically aggregate paginated results so you get the full dataset without writing loop logic.
+
+The result: you write `Get-LrHosts | Where-Object { $_.hostStatus -eq 'Active' } | Get-LrHostIdentifiers` and the module handles auth, pagination, retries, TLS, and error normalization behind the scenes. This makes LogRhythm.Tools equally useful for interactive analysis, scripting, and as the foundation for SmartResponse plugin development.
 
 ## Testing
 
-LogRhythm.Tools includes a comprehensive, tiered testing framework to validate the module in your environment without risking production data. 
+LogRhythm.Tools includes two complementary testing approaches:
 
-We utilize a progressive testing approach to isolate issues and ensure stability:
-* **Tiers 0-2 (Offline Validation):** Verifies module structure, parameter compliance, and code standards using `Test-ModuleValidation.ps1` (No API keys or SIEM connection required).
-* **Tier 3 (Read-Only API):** Validates API authentication and connectivity using safe `Get-` commands against your SIEM.
-* **Tier 4 (Write/Mutate API):** Validates object creation and manipulation using throwaway test objects (Cases, Hosts, Lists).
-* **Tier 5 (Third-Party):** Validates external API integrations (e.g., VirusTotal, Shodan).
+### Offline Validation
+`Test-ModuleValidation.ps1` verifies module structure, parameter compliance, and code standards without requiring API keys or a SIEM connection. Run this first to catch structural issues before going live.
 
-For complete, copy-pasteable testing commands, troubleshooting steps, and Postman validation tips, please see the [Detailed Testing Guide](tests/README.md).
+```powershell
+.\tests\Test-ModuleValidation.ps1
+```
+
+### Live API Test Harness
+`Test-LiveApiEndpoints.ps1` runs every GET cmdlet against a live LogRhythm deployment and produces structured JSON results. It exercises `Invoke-RestAPIMethod` end-to-end — proving that authentication, endpoint paths, pagination, retry logic, and error handling all work against your specific SIEM version.
+
+The harness executes in three phases:
+1. **Discovery** — Runs ~40 parameterless GET cmdlets (list endpoints) and caches the first result from each.
+2. **Id-Dependent** — Runs ~44 cmdlets that require an Id parameter, resolved automatically from the discovery cache.
+3. **Complex** — Runs cmdlets needing constructed parameters (date ranges, filters, etc.).
+
+Each call is timed, checked for errors, and recorded with status (`PASS`/`WARN`/`SKIP`/`FAIL`), HTTP code, response time, and result count.
+
+```powershell
+# Run all tests (skip known slow endpoints)
+.\tests\Test-LiveApiEndpoints.ps1 -SkipSlow
+
+# Run only Admin API tests with verbose output
+.\tests\Test-LiveApiEndpoints.ps1 -Category Admin -Detailed
+
+# Results saved automatically to tests/results/ as timestamped JSON
+Get-Content tests\results\*.json | ConvertFrom-Json | Select-Object -ExpandProperty metadata
+```
+
+For additional testing tiers (write/mutate, third-party integrations) and Postman validation tips, see the [Detailed Testing Guide](tests/README.md).
 
 **LogRhythm Components:**
 

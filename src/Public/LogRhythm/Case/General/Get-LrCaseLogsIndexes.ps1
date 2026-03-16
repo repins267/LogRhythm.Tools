@@ -38,7 +38,7 @@ Function Get-LrCaseLogsIndexes {
     }
 
     Process {
-        $RequestUrl = $BaseUrl + "/lr-case-api/cases/logs-indexes//"
+        $RequestUrl = $BaseUrl + "/lr-case-api/logs-indexes/"
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
         $Response = Invoke-RestAPIMethod -Uri $RequestUrl -Headers $Headers -Method $Method -Origin $Me

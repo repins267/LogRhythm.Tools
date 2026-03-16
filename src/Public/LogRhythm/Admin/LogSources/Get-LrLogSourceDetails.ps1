@@ -159,7 +159,7 @@ Function Get-LrLogSourceDetails {
         }
 
         # Verify version
-        if ($LrtConfig.LogRhythm.Version -notmatch '7\.[5-9]\.\d+') {
+        if ($LrtConfig.LogRhythm.Version -notmatch '7\.([5-9]|\d{2,})\.\d+') {
             $ErrorObject.Error = $true
             $ErrorObject.Code = "404"
             $ErrorObject.Type = "Cmdlet not supported."

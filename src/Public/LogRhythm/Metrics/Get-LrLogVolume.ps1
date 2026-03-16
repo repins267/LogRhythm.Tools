@@ -61,12 +61,15 @@ Function Get-LrLogVolume {
             return $ErrorObject
         }
 
-        $RequestUrl = $BaseUrl + "/lr-metrics-api/logvolume//"
+        $RequestUrl = $BaseUrl + "/lr-metrics-api/logvolume/"
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
         $Body = [PSCustomObject]@{
-            startDate = $StartDate.ToString("o")
-            endDate   = $EndDate.ToString("o")
+            minDate = $StartDate.ToString("yyyy-MM-ddTHH:mm:ssZ")
+            maxDate = $EndDate.ToString("yyyy-MM-ddTHH:mm:ssZ")
+            groupBy = [PSCustomObject]@{
+                fieldName = "Entity"
+            }
         }
 
         Write-Verbose "[$Me]: Request Body:`n$($Body | ConvertTo-Json)"

@@ -313,7 +313,7 @@ Function New-LrNetwork {
         # Location lookup
         if ($LocationId -and $Location) {
             if ($LocationLookup) {
-                if ($LrtConfig.LogRhythm.Version -notmatch '7\.[5-9]\.\d+') {
+                if ($LrtConfig.LogRhythm.Version -notmatch '7\.([5-9]|\d{2,})\.\d+') {
                     $LocationStatus = Show-LrLocations -Id $LocationId
                     if ($LocationStatus) {
                         $_locationName = $LocationStatus.name
@@ -336,7 +336,7 @@ Function New-LrNetwork {
             }
         } elseif ($Location) {
             if ($LocationLookup) {
-                if ($LrtConfig.LogRhythm.Version -notmatch '7\.[5-9]\.\d+') {
+                if ($LrtConfig.LogRhythm.Version -notmatch '7\.([5-9]|\d{2,})\.\d+') {
                     $LocationStatus = Show-LrLocations -Name $Location -Exact
                     if ($LocationStatus) {
                         $_locationName = $LocationStatus.name

@@ -275,7 +275,7 @@ Function New-LrHost {
         # Location lookup
         if ($LocationId -and $Location) {
             if ($LocationLookup) {
-                if ($LrtConfig.LogRhythm.Version -notmatch '7\.[5-9]\.\d+') {
+                if ($LrtConfig.LogRhythm.Version -notmatch '7\.([5-9]|\d{2,})\.\d+') {
                     $LocationStatus = Show-LrLocations -Id $LocationId
                     if ($LocationStatus) {
                         $_locationName = $LocationStatus.name
@@ -298,7 +298,7 @@ Function New-LrHost {
             }
         } elseif ($Location) {
             if ($LocationLookup) {
-                if ($LrtConfig.LogRhythm.Version -notmatch '7\.[5-9]\.\d+') {
+                if ($LrtConfig.LogRhythm.Version -notmatch '7\.([5-9]|\d{2,})\.\d+') {
                     $LocationStatus = Show-LrLocations -Name $Location -Exact
                     if ($LocationStatus) {
                         $_locationName = $LocationStatus.name
@@ -325,7 +325,7 @@ Function New-LrHost {
         # Ensure proper syntax
         if ($RecordStatus) {
             # Update RecordStatus for 7.5 API
-            if ($LrtConfig.LogRhythm.Version -match '7\.[5-9]\.\d+') {
+            if ($LrtConfig.LogRhythm.Version -match '7\.([5-9]|\d{2,})\.\d+') {
                 if ($RecordStatus -eq "new") {
                     $RecordStatus = "active"
                 }
