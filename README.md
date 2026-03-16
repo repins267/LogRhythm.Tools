@@ -72,7 +72,7 @@ PowerShell Core
 ***Required (Have these ready for Initial Setup)***
 - LogRhythm Platform Manager URL (e.g., `https://pm-server:8501`)
 - LogRhythm SIEM Version (e.g., `7.11.0`)
-- LogRhythm API Key
+- LogRhythm API Key (Third-Party Token)
 
 ***Optional (Configured separately for Third-Party Integrations)***
 - Exabeam API Key
