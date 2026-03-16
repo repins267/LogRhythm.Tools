@@ -39,7 +39,7 @@ Function Get-LrCaseFeatureFlags {
     }
 
     Process {
-        $RequestUrl = $BaseUrl + "/lr-case-api/featureFlags/"
+        $RequestUrl = $BaseUrl + "/lr-case-api/feature-flags//"
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
         $Response = Invoke-RestAPIMethod -Uri $RequestUrl -Headers $Headers -Method $Method -Origin $Me

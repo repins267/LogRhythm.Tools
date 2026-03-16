@@ -81,7 +81,7 @@ Function New-LrAdminUser {
             return $ErrorObject
         }
 
-        $RequestUrl = $BaseUrl + "/lr-admin-api/persons/"
+        $RequestUrl = $BaseUrl + "/lr-admin-api/users/"
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
         $Body = [PSCustomObject]@{

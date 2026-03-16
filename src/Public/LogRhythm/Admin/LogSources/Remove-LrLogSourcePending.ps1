@@ -81,7 +81,7 @@ Function Remove-LrLogSourcePending {
         }
 
         # Request URL
-        $RequestUrl = $BaseUrl + "/lr-admin-api/logsources/pending/" + $Id + "/"
+        $RequestUrl = $BaseUrl + "/lr-admin-api/logsources-request/" + $Id + "/"
 
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 

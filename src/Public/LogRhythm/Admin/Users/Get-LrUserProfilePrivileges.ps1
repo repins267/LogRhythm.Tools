@@ -56,7 +56,7 @@ Function Get-LrUserProfilePrivileges {
             return $ErrorObject
         }
 
-        $RequestUrl = $BaseUrl + "/lr-admin-api/userProfiles/" + $Id + "/privileges/"
+        $RequestUrl = $BaseUrl + "/lr-admin-api/user-profiles/" + $Id + "/privileges/"
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
         $Response = Invoke-RestAPIMethod -Uri $RequestUrl -Headers $Headers -Method $Method -Origin $Me

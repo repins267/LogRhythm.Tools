@@ -100,7 +100,7 @@ Function New-LrLogSourcePending {
         }
 
         # Request URL
-        $RequestUrl = $BaseUrl + "/lr-admin-api/logsources/pending/"
+        $RequestUrl = $BaseUrl + "/lr-admin-api/logsources-request/"
 
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 

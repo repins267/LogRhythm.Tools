@@ -67,7 +67,7 @@ Function Update-LrNotificationGroup {
             return $ErrorObject
         }
 
-        $RequestUrl = $BaseUrl + "/lr-admin-api/notificationGroups/" + $Id + "/"
+        $RequestUrl = $BaseUrl + "/lr-admin-api/notification-groups/" + $Id + "/"
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
         $Body = [PSCustomObject]@{

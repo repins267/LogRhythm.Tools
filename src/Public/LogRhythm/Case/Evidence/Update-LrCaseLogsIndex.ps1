@@ -63,7 +63,7 @@ Function Update-LrCaseLogsIndex {
             return $IdStatus
         }
 
-        $RequestUrl = $BaseUrl + "/lr-case-api/cases/$CaseNumber/evidence/logsIndex/"
+        $RequestUrl = $BaseUrl + "/lr-case-api/cases/$CaseNumber/evidence/logs-index/"
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
         $Body = $LogsIndex | ConvertTo-Json -Depth 5

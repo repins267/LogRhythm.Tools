@@ -55,7 +55,7 @@ Function Get-LrAdminUser {
             return $ErrorObject
         }
 
-        $RequestUrl = $BaseUrl + "/lr-admin-api/persons/" + $Id + "/"
+        $RequestUrl = $BaseUrl + "/lr-admin-api/users/" + $Id + "/"
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
         $Response = Invoke-RestAPIMethod -Uri $RequestUrl -Headers $Headers -Method $Method -Origin $Me

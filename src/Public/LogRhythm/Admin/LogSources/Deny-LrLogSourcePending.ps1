@@ -81,7 +81,7 @@ Function Deny-LrLogSourcePending {
         }
 
         # Request URL
-        $RequestUrl = $BaseUrl + "/lr-admin-api/logsources/pending/" + $Id + "/actions/reject/"
+        $RequestUrl = $BaseUrl + "/lr-admin-api/logsources-request/" + $Id + "/reject/"
 
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 

@@ -134,7 +134,7 @@ Function Test-LrtConfiguration {
                     $Token = $SvcConfig.ApiKey.GetNetworkCredential().Password
                     $Headers = [Dictionary[string,string]]::new()
                     $Headers.Add("Authorization", "Bearer $Token")
-                    $TestUrl = $SvcConfig.BaseUrl + "/lr-admin-api/persons/?count=1&offset=0"
+                    $TestUrl = $SvcConfig.BaseUrl + "/lr-admin-api/users/?count=1&offset=0"
                     Write-Verbose "[$Me]: Testing connectivity to $TestUrl"
                     $Response = Invoke-RestAPIMethod -Uri $TestUrl -Headers $Headers -Method $HttpMethod.Get -Origin $Me
                     if (($null -ne $Response.Error) -and ($Response.Error -eq $true)) {

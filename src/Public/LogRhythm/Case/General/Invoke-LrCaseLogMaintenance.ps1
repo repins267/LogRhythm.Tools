@@ -45,7 +45,7 @@ Function Invoke-LrCaseLogMaintenance {
     }
 
     Process {
-        $RequestUrl = $BaseUrl + "/lr-case-api/cases/evidence/logs/maintenance/"
+        $RequestUrl = $BaseUrl + "/lr-case-api/cases/maintenance/log-evidence-ttl//"
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
         $Response = Invoke-RestAPIMethod -Uri $RequestUrl -Headers $Headers -Method $Method -Origin $Me

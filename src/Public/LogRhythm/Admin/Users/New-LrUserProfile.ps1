@@ -66,7 +66,7 @@ Function New-LrUserProfile {
             return $ErrorObject
         }
 
-        $RequestUrl = $BaseUrl + "/lr-admin-api/userProfiles/"
+        $RequestUrl = $BaseUrl + "/lr-admin-api/user-profiles/"
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
         $Body = [PSCustomObject]@{

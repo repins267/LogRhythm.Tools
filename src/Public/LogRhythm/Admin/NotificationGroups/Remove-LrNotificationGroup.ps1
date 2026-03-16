@@ -61,7 +61,7 @@ Function Remove-LrNotificationGroup {
             return $ErrorObject
         }
 
-        $RequestUrl = $BaseUrl + "/lr-admin-api/notificationGroups/" + $Id + "/"
+        $RequestUrl = $BaseUrl + "/lr-admin-api/notification-groups/" + $Id + "/"
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
         $Response = Invoke-RestAPIMethod -Uri $RequestUrl -Headers $Headers -Method $Method -Origin $Me

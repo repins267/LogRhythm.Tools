@@ -89,7 +89,7 @@ Function Join-LrLogSourcePending {
         }
 
         # Request URL
-        $RequestUrl = $BaseUrl + "/lr-admin-api/logsources/pending/" + $Id + "/actions/associate/"
+        $RequestUrl = $BaseUrl + "/lr-admin-api/logsources-request/" + $Id + "/associate/"
 
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 

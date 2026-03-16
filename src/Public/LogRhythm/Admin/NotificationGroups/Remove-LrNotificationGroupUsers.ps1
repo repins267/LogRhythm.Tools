@@ -67,7 +67,7 @@ Function Remove-LrNotificationGroupUsers {
             return $ErrorObject
         }
 
-        $RequestUrl = $BaseUrl + "/lr-admin-api/notificationGroups/" + $Id + "/persons/"
+        $RequestUrl = $BaseUrl + "/lr-admin-api/notification-groups/" + $Id + "/users/"
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
         $Body = $PersonIds | ConvertTo-Json

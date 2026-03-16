@@ -71,7 +71,7 @@ Function New-LrUserLogin {
             return $ErrorObject
         }
 
-        $RequestUrl = $BaseUrl + "/lr-admin-api/userLogins/"
+        $RequestUrl = $BaseUrl + "/lr-admin-api/users/user-logins/"
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
         # Convert SecureString to plain text for API submission

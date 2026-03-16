@@ -51,7 +51,7 @@ Function Get-LrLicenseEntitlements {
             return $ErrorObject
         }
 
-        $RequestUrl = $BaseUrl + "/lr-admin-api/licenses/entitlements/"
+        $RequestUrl = $BaseUrl + "/lr-admin-api/licensed-entitlements//"
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
         $Response = Invoke-RestAPIMethod -Uri $RequestUrl -Headers $Headers -Method $Method -Origin $Me

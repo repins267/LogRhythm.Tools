@@ -67,7 +67,7 @@ Function New-LrMsgSourceType {
             return $ErrorObject
         }
 
-        $RequestUrl = $BaseUrl + "/lr-admin-api/msgSourceTypes/"
+        $RequestUrl = $BaseUrl + "/lr-admin-api/messagesourcetypes/"
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
         $Body = [PSCustomObject]@{

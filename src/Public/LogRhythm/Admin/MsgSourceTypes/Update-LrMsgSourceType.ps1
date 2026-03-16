@@ -82,7 +82,7 @@ Function Update-LrMsgSourceType {
         if ($PSBoundParameters.ContainsKey('Name')) { $_name = $Name } else { $_name = $ExistingRecord.name }
         if ($PSBoundParameters.ContainsKey('Abbreviation')) { $_abbreviation = $Abbreviation } else { $_abbreviation = $ExistingRecord.abbreviation }
 
-        $RequestUrl = $BaseUrl + "/lr-admin-api/msgSourceTypes/" + $Id + "/"
+        $RequestUrl = $BaseUrl + "/lr-admin-api/messagesourcetypes/" + $Id + "/"
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
         $Body = [PSCustomObject]@{

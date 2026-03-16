@@ -62,7 +62,7 @@ Function Copy-LrUserProfile {
             return $ErrorObject
         }
 
-        $RequestUrl = $BaseUrl + "/lr-admin-api/userProfiles/" + $Id + "/clone/"
+        $RequestUrl = $BaseUrl + "/lr-admin-api/user-profiles/" + $Id + "/clone/"
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
         $Response = Invoke-RestAPIMethod -Uri $RequestUrl -Headers $Headers -Method $Method -Origin $Me

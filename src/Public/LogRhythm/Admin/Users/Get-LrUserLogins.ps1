@@ -71,7 +71,7 @@ Function Get-LrUserLogins {
             Write-Verbose "[$Me]: QueryString is [$QueryString]"
         }
 
-        $RequestUrl = $BaseUrl + "/lr-admin-api/userLogins/" + $QueryString
+        $RequestUrl = $BaseUrl + "/lr-admin-api/users/user-logins/" + $QueryString
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
         $Response = Invoke-RestAPIMethod -Uri $RequestUrl -Headers $Headers -Method $Method -Origin $Me
@@ -84,11 +84,11 @@ Function Get-LrUserLogins {
                 $Offset = ($PageCount -1) * $PageValuesCount
                 $QueryParams.offset = $Offset
                 $QueryString = $QueryParams | ConvertTo-QueryString
-                $RequestUrl = $BaseUrl + "/lr-admin-api/userLogins/" + $QueryString
+                $RequestUrl = $BaseUrl + "/lr-admin-api/users/user-logins/" + $QueryString
                 Write-Verbose "[$Me]: Request URL: $RequestUrl"
                 $PaginationResults = Invoke-RestAPIMethod -Uri $RequestUrl -Headers $Headers -Method $Method -Origin $Me
                 if (($null -ne $PaginationResults.Error) -and ($PaginationResults.Error -eq $true)) { return $PaginationResults }
-                $Response = $Response + $PaginationResults
+                $Response = @($Response) + @($PaginationResults)
             } While ($($PaginationResults.Count) -eq $PageValuesCount)
             $Response = $Response | Sort-Object -Property id -Unique
             Write-Verbose "[$Me]: End Pagination"

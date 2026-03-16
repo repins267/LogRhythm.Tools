@@ -61,7 +61,7 @@ Function Get-LrIdentityFromList {
             return $ErrorObject
         }
 
-        $RequestUrl = $BaseUrl + "/lr-admin-api/identityLists/" + $ListId + "/identities/" + $IdentityId + "/"
+        $RequestUrl = $BaseUrl + "/lr-admin-api/identity-lists/" + $ListId + "/identities/" + $IdentityId + "/"
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
         $Response = Invoke-RestAPIMethod -Uri $RequestUrl -Headers $Headers -Method $Method -Origin $Me

@@ -75,7 +75,7 @@ Function Get-LrLogSourcePendingMatches {
         }
 
         # Request URL
-        $RequestUrl = $BaseUrl + "/lr-admin-api/logsources/pending/" + $Id + "/matching/"
+        $RequestUrl = $BaseUrl + "/lr-admin-api/logsources-request/" + $Id + "/matching/"
 
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 

@@ -98,7 +98,7 @@ Function Approve-LrLogSourcesPending {
         }
 
         # Request URL
-        $RequestUrl = $BaseUrl + "/lr-admin-api/logsources/pending/actions/accept/"
+        $RequestUrl = $BaseUrl + "/lr-admin-api/logsources-request/accept/"
 
         Write-Verbose "[$Me]: Request URL: $RequestUrl"
 
