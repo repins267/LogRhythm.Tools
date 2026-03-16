@@ -227,7 +227,7 @@ Function Get-LrHosts {
                 }
                 
                 # Append results to Response
-                $Response = $Response + $PaginationResults
+                $Response = @($Response) + @($PaginationResults)
                 write-verbose "Response Count: $($PaginationResults.Count)  Page Value Count: $PageValuesCount"
             } While ($($PaginationResults.Count) -eq $PageValuesCount)
             $Response = $Response | Sort-Object -Property Id -Unique

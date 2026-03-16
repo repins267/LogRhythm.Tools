@@ -141,7 +141,7 @@ Function Get-LrMpePolicyRules {
                 }
 
                 # Append results to Response
-                $Response = $Response + $PaginationResults
+                $Response = @($Response) + @($PaginationResults)
             } While ($($PaginationResults.data.Count) -eq $PageValuesCount)
 
             $Response = $Response | Sort-Object -Property id -Unique

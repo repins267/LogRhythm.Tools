@@ -133,7 +133,7 @@ Function Get-LrCollaborators {
                 }
                 
                 # Append results to Response
-                $Response = $Response + $PaginationResults
+                $Response = @($Response) + @($PaginationResults)
             } While ($($PaginationResults.Count) -eq $Count)
             Write-Verbose "[$Me]: End Pagination"
         }

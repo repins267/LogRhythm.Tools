@@ -253,7 +253,7 @@ Function Get-LrIdentities {
                 }
                 
                 # Append results to Response
-                $Response = $Response + $PaginationResults
+                $Response = @($Response) + @($PaginationResults)
             } While ($($PaginationResults.Count) -eq $PageValuesCount)
             $Response = $Response | Sort-Object -Property identityID -Unique
             Write-Verbose "[$Me]: End Pagination"

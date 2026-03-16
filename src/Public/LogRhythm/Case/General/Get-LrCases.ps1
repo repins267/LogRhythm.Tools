@@ -539,7 +539,7 @@ Function Get-LrCases {
                 }
                 
                 # Append results to Response
-                $Response = $Response + $PaginationResults
+                $Response = @($Response) + @($PaginationResults)
             } While (($($PaginationResults.Count) -eq $Count) -and ($PageNumber -lt $MaxPages))
             Write-Verbose "[$Me]: End Pagination"
         }

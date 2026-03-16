@@ -77,7 +77,7 @@ Function Get-LrCaseGlobalHistory {
                 Write-Verbose "[$Me]: Request URL: $RequestUrl"
                 $PaginationResults = Invoke-RestAPIMethod -Uri $RequestUrl -Headers $Headers -Method $Method -Origin $Me
                 if (($null -ne $PaginationResults.Error) -and ($PaginationResults.Error -eq $true)) { return $PaginationResults }
-                $Response = $Response + $PaginationResults
+                $Response = @($Response) + @($PaginationResults)
             } While ($($PaginationResults.Count) -eq $PageValuesCount)
             Write-Verbose "[$Me]: End Pagination"
         }

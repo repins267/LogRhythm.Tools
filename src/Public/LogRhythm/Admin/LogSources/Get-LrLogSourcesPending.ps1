@@ -278,7 +278,7 @@ Function Get-LrLogSourcesPending {
                 }
                 
                 # Append results to Response
-                $Response = $Response + $PaginationResults
+                $Response = @($Response) + @($PaginationResults)
             } While ($($PaginationResults.Count) -eq $PageValuesCount)
             Write-Verbose "[$Me]: End Pagination"
         }

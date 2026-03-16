@@ -420,7 +420,7 @@ Function Get-LrLogSources {
                 }
                 
                 # Append results to Response
-                $Response = $Response + $PaginationResults
+                $Response = @($Response) + @($PaginationResults)
             } While ($($PaginationResults.Count) -eq $PageValuesCount)
             $Response = $Response | Sort-Object -Property id -Unique
             Write-Verbose "[$Me]: End Pagination"

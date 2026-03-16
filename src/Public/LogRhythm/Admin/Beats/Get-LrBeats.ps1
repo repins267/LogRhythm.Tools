@@ -138,7 +138,7 @@ Function Get-LrBeats {
                     return $PaginationResults
                 }
 
-                $Response = $Response + $PaginationResults
+                $Response = @($Response) + @($PaginationResults)
             } While ($($PaginationResults.Count) -eq $PageValuesCount)
 
             $Response = $Response | Sort-Object -Property id -Unique
