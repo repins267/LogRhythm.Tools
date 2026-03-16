@@ -90,15 +90,6 @@ PowerShell Core
 
 > **Note:** As of v1.5.0, the installation and setup process has been modernized natively within the module.
 
-### Legacy Installation (Outdated)
-~~* Download and extract the LogRhythm.Tools release package~~
-~~* Run `Setup.ps1` on a host that meets LogRhythm.Tools system requirements~~
-~~* Follow the directions presented through the interactive installer~~
-~~* To apply configuration changes re-run the `Setup.ps1`~~
-
-~~### Installation Demo~~
-~~<img src="https://raw.githubusercontent.com/LogRhythm-Tools/LogRhythm.Tools/master/docs/examples/LR.Tools_Installer.gif" width="750" />~~
-
 ### 1. First-Time Setup (v1.5.0+)
 1. Download and extract the LogRhythm.Tools release package, or clone the repository.
 2. Open PowerShell and import the module:
