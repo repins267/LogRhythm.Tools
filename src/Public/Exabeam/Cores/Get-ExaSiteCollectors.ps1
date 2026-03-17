@@ -56,7 +56,7 @@ Function Get-ExaSiteCollectors {
         $Me = $MyInvocation.MyCommand.Name
         Set-LrtExaToken
         # Request Setup
-        $BaseUrl = $LrtConfig.Exabeam.BaseUrl
+        $BaseUrl = $LrtConfig.Exabeam.BaseUrl.TrimEnd("/") + "/"
         $Token = $LrtConfig.Exabeam.Token.access_token
 
 

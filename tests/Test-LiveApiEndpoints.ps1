@@ -1,35 +1,53 @@
 #Requires -Version 5.0
 <#
 .SYNOPSIS
-    Live API test harness for LogRhythm.Tools GET cmdlets.
+    Live API test harness for SIEM.Tools (LogRhythm + Exabeam) cmdlets.
 .DESCRIPTION
-    Runs all GET cmdlets against a live LogRhythm 7.23 XM lab, tracks pass/fail/skip
-    status, measures response timing, and saves structured JSON results to tests/results/.
+    Runs cmdlets against live LogRhythm 7.23 XM and/or Exabeam NewScale environments,
+    tracks pass/fail/skip status, measures response timing, and saves structured JSON
+    results to tests/results/.
 
     Phase 1 - Discovery: Parameterless list cmdlets populate a cache
     Phase 2 - Id-Dependent: Cmdlets that need an Id resolved from the discovery cache
     Phase 3 - Complex: Cmdlets requiring constructed parameters (date ranges, etc.)
+    Phase 4 - Mutating: Create/Update/Delete lifecycle tests (requires -IncludeMutating)
+.PARAMETER Platform
+    Which SIEM platform(s) to test: LogRhythm, Exabeam, or Both. Default: Both.
 .PARAMETER Category
-    Filter by category. Default: All.
+    Filter LogRhythm tests by subcategory. Default: All.
 .PARAMETER IncludeMutating
-    Include New/Add/Update/Remove cmdlets (not implemented yet).
+    Include New/Update/Remove lifecycle tests (creates temporary test objects, then cleans up).
 .PARAMETER SkipSlow
     Skip cmdlets marked as slow (e.g., Get-LrMpeRule).
 .PARAMETER Detailed
     Show per-cmdlet verbose output during execution.
 .EXAMPLE
-    PS C:\> .\Test-LiveApiEndpoints.ps1 -SkipSlow
+    PS C:\> .\Test-LiveApiEndpoints.ps1 -Platform Exabeam
+    ---
+    Run only Exabeam endpoint tests.
 .EXAMPLE
-    PS C:\> .\Test-LiveApiEndpoints.ps1 -Category Admin -Detailed
+    PS C:\> .\Test-LiveApiEndpoints.ps1 -Platform LogRhythm -Category Admin
+    ---
+    Run only LogRhythm Admin category tests.
 .EXAMPLE
-    PS C:\> .\Test-LiveApiEndpoints.ps1 -Category Case
+    PS C:\> .\Test-LiveApiEndpoints.ps1 -Platform Both
+    ---
+    Run all tests across both platforms.
+.EXAMPLE
+    PS C:\> .\Test-LiveApiEndpoints.ps1 -Platform Exabeam -IncludeMutating
+    ---
+    Run Exabeam tests including create/update/delete lifecycle.
 .LINK
-    https://github.com/repins267/LogRhythm.Tools/tree/v1.5.0-update
+    https://github.com/LogRhythm-Tools/LogRhythm.Tools
 #>
 
 [CmdletBinding()]
 Param(
     [Parameter(Mandatory = $false, Position = 0)]
+    [ValidateSet("LogRhythm", "Exabeam", "Both")]
+    [string] $Platform = "Both",
+
+    [Parameter(Mandatory = $false, Position = 1)]
     [ValidateSet("Admin", "Case", "Alarm", "Metrics", "AIE", "All")]
     [string] $Category = "All",
 
@@ -46,11 +64,13 @@ Param(
 # ============================================================================
 # Setup
 # ============================================================================
+$RunLr = $Platform -eq "LogRhythm" -or $Platform -eq "Both"
+$RunExa = $Platform -eq "Exabeam" -or $Platform -eq "Both"
 $ErrorActionPreference = "Continue"
 $ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot = Split-Path -Parent $ScriptRoot
 $ResultsDir = Join-Path $ScriptRoot "results"
-$Psm1Path = Join-Path $RepoRoot "src" "LogRhythm.Tools.psm1"
+$Psm1Path = Join-Path (Join-Path $RepoRoot "src") "LogRhythm.Tools.psm1"
 
 if (-not (Test-Path $ResultsDir)) {
     New-Item -Path $ResultsDir -ItemType Directory -Force | Out-Null
@@ -377,6 +397,115 @@ $AllTests = @(
     # ===========================================================
     @{ Cmdlet = "Test-LrtConfiguration"; Category = "Admin"; Subcategory = "Config"; Phase = 1; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null; IdProperty = $null; Parameters = @{}; DependsOn = $null }
     @{ Cmdlet = "Get-LrAieSummary";      Category = "AIE";   Subcategory = "AIE";    Phase = 2; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null;          IdProperty = $null; Parameters = @{ AlarmId = '{LrAlarms.alarmId}' }; DependsOn = "LrAlarms" }
+
+    # ===========================================================
+    # Exabeam Discovery (Phase 1)
+    # ===========================================================
+
+    # --- Correlation Rules ---
+    @{ Cmdlet = "Get-ExaCorrelationRules";       Category = "Exabeam"; Subcategory = "CorrelationRules";   Phase = 1; IsSlow = $false; IsDiscovery = $true;  DiscoveryKey = "ExaCorrRules";       IdProperty = "id"; Parameters = @{}; DependsOn = $null }
+
+    # --- Detection Management ---
+    @{ Cmdlet = "Get-ExaAnalyticsRules";         Category = "Exabeam"; Subcategory = "DetectionMgmt";     Phase = 1; IsSlow = $false; IsDiscovery = $true;  DiscoveryKey = "ExaAnalyticsRules";  IdProperty = "id"; Parameters = @{}; DependsOn = $null }
+
+    # --- Context Tables ---
+    @{ Cmdlet = "Get-ExaContextTables";          Category = "Exabeam"; Subcategory = "Context";           Phase = 1; IsSlow = $false; IsDiscovery = $true;  DiscoveryKey = "ExaContextTables";   IdProperty = "id"; Parameters = @{}; DependsOn = $null }
+
+    # --- Cloud Collectors ---
+    @{ Cmdlet = "Get-ExaCloudCollectors";        Category = "Exabeam"; Subcategory = "CloudCollectors";   Phase = 1; IsSlow = $false; IsDiscovery = $true;  DiscoveryKey = "ExaCloudCollectors"; IdProperty = "id"; Parameters = @{}; DependsOn = $null }
+    @{ Cmdlet = "Get-ExaCloudAccounts";          Category = "Exabeam"; Subcategory = "CloudCollectors";   Phase = 1; IsSlow = $false; IsDiscovery = $true;  DiscoveryKey = "ExaCloudAccounts";   IdProperty = "id"; Parameters = @{}; DependsOn = $null }
+
+    # --- Service Health ---
+    @{ Cmdlet = "Get-ExaHealthStatus";           Category = "Exabeam"; Subcategory = "ServiceHealth";     Phase = 1; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null;                IdProperty = $null; Parameters = @{}; DependsOn = $null }
+    @{ Cmdlet = "Get-ExaCorrelationRuleCount";   Category = "Exabeam"; Subcategory = "ServiceHealth";     Phase = 1; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null;                IdProperty = $null; Parameters = @{}; DependsOn = $null }
+    @{ Cmdlet = "Get-ExaLicenseDetails";         Category = "Exabeam"; Subcategory = "ServiceHealth";     Phase = 1; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null;                IdProperty = $null; Parameters = @{}; DependsOn = $null }
+    @{ Cmdlet = "Get-ExaStorageConsumption";     Category = "Exabeam"; Subcategory = "ServiceHealth";     Phase = 1; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null;                IdProperty = $null; Parameters = @{}; DependsOn = $null }
+
+    # --- Platform ---
+    @{ Cmdlet = "Get-ExaUsers";                  Category = "Exabeam"; Subcategory = "Platform";          Phase = 1; IsSlow = $false; IsDiscovery = $true;  DiscoveryKey = "ExaUsers";           IdProperty = "id"; Parameters = @{}; DependsOn = $null }
+    @{ Cmdlet = "Get-ExaRoles";                  Category = "Exabeam"; Subcategory = "Platform";          Phase = 1; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null;                IdProperty = $null; Parameters = @{}; DependsOn = $null }
+    @{ Cmdlet = "Get-ExaApiKeys";                Category = "Exabeam"; Subcategory = "Platform";          Phase = 1; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null;                IdProperty = $null; Parameters = @{}; DependsOn = $null }
+
+    # --- Agents ---
+    @{ Cmdlet = "Get-ExaSiteAgents";             Category = "Exabeam"; Subcategory = "Agents";            Phase = 1; IsSlow = $false; IsDiscovery = $true;  DiscoveryKey = "ExaAgents";          IdProperty = "id"; Parameters = @{}; DependsOn = $null }
+
+    # --- Cores ---
+    @{ Cmdlet = "Get-ExaSiteCollectors";         Category = "Exabeam"; Subcategory = "Cores";             Phase = 1; IsSlow = $false; IsDiscovery = $true;  DiscoveryKey = "ExaCollectors";      IdProperty = "id"; Parameters = @{}; DependsOn = $null }
+
+
+    # --- Search (Phase 3 — requires parameters) ---
+    @{ Cmdlet = "Get-ExaSearch";                 Category = "Exabeam"; Subcategory = "Search";            Phase = 3; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null;                IdProperty = $null; Parameters = @{
+            Filter = { 'activity_type:"app-login"' }
+            Fields = { @("user", "activity_type", "outcome") }
+        }; DependsOn = $null }
+
+    # --- Audit (Phase 3 — requires parameters) ---
+    @{ Cmdlet = "Search-ExaAuditEvents";         Category = "Exabeam"; Subcategory = "Audit";             Phase = 3; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null;                IdProperty = $null; Parameters = @{
+            Filter = { '*' }
+            StartTime = { (Get-Date).AddDays(-7).ToString("yyyy-MM-ddTHH:mm:ssZ") }
+            EndTime = { (Get-Date).ToString("yyyy-MM-ddTHH:mm:ssZ") }
+        }; DependsOn = $null }
+
+    # --- MITRE ---
+    @{ Cmdlet = "Get-ExaMitreTechniques";        Category = "Exabeam"; Subcategory = "Mitre";             Phase = 1; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null;                IdProperty = $null; Parameters = @{}; DependsOn = $null }
+
+    # --- Use Cases ---
+    @{ Cmdlet = "Get-ExaUseCases";               Category = "Exabeam"; Subcategory = "UseCases";          Phase = 1; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null;                IdProperty = $null; Parameters = @{}; DependsOn = $null }
+
+    # ===========================================================
+    # Exabeam Id-Dependent (Phase 2)
+    # ===========================================================
+
+    # --- Correlation Rules ---
+    @{ Cmdlet = "Get-ExaCorrelationRuleById";    Category = "Exabeam"; Subcategory = "CorrelationRules";   Phase = 2; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null; IdProperty = $null; Parameters = @{ Id = '{ExaCorrRules.id}' };              DependsOn = "ExaCorrRules" }
+    @{ Cmdlet = "Export-ExaCorrelationRules";     Category = "Exabeam"; Subcategory = "CorrelationRules";   Phase = 2; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null; IdProperty = $null; Parameters = @{ Id = '{ExaCorrRules.id}' };              DependsOn = "ExaCorrRules" }
+
+    # --- Detection Management ---
+    @{ Cmdlet = "Export-ExaAnalyticsRules";       Category = "Exabeam"; Subcategory = "DetectionMgmt";     Phase = 2; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null; IdProperty = $null; Parameters = @{ Id = '{ExaAnalyticsRules.id}' };          DependsOn = "ExaAnalyticsRules" }
+
+    # --- Context Tables ---
+    @{ Cmdlet = "Get-ExaContextTable";           Category = "Exabeam"; Subcategory = "Context";           Phase = 2; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null; IdProperty = $null; Parameters = @{ Id = '{ExaContextTables.id}' };           DependsOn = "ExaContextTables" }
+    @{ Cmdlet = "Get-ExaContextTableAttributes"; Category = "Exabeam"; Subcategory = "Context";           Phase = 2; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null; IdProperty = $null; Parameters = @{ Id = '{ExaContextTables.id}' };           DependsOn = "ExaContextTables" }
+    @{ Cmdlet = "Get-ExaContextAttributes";      Category = "Exabeam"; Subcategory = "Context";           Phase = 2; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null; IdProperty = $null; Parameters = @{ Id = '{ExaContextTables.id}' };           DependsOn = "ExaContextTables" }
+    @{ Cmdlet = "Get-ExaContextRecords";         Category = "Exabeam"; Subcategory = "Context";           Phase = 2; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null; IdProperty = $null; Parameters = @{ Id = '{ExaContextTables.id}' };           DependsOn = "ExaContextTables" }
+
+    # --- Cloud Collectors ---
+    @{ Cmdlet = "Get-ExaCloudCollector";         Category = "Exabeam"; Subcategory = "CloudCollectors";   Phase = 2; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null; IdProperty = $null; Parameters = @{ Id = '{ExaCloudCollectors.id}' };         DependsOn = "ExaCloudCollectors" }
+    @{ Cmdlet = "Get-ExaCloudAccount";           Category = "Exabeam"; Subcategory = "CloudCollectors";   Phase = 2; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null; IdProperty = $null; Parameters = @{ Id = '{ExaCloudAccounts.id}' };           DependsOn = "ExaCloudAccounts" }
+
+    # --- Agents ---
+    @{ Cmdlet = "Get-ExaSiteAgentInstallCommand"; Category = "Exabeam"; Subcategory = "Agents";           Phase = 2; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null; IdProperty = $null; Parameters = @{ Type = "windows" };                       DependsOn = $null }
+
+    # --- Cores (Id-Dependent) ---
+    @{ Cmdlet = "Get-ExaSiteCollectorCerts";     Category = "Exabeam"; Subcategory = "Cores";             Phase = 2; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null; IdProperty = $null; Parameters = @{ CoreID = '{ExaCollectors.id}' };           DependsOn = "ExaCollectors" }
+
+    # ===========================================================
+    # Exabeam Mutating Lifecycle (Phase 4 — requires -IncludeMutating)
+    # ===========================================================
+    @{ Cmdlet = "New-ExaCorrelationRule";        Category = "Exabeam"; Subcategory = "CorrelationRules";   Phase = 4; IsSlow = $false; IsDiscovery = $true; DiscoveryKey = "ExaTestRule"; IdProperty = "id"; IsMutating = $true; Parameters = @{
+            Name = "[TEST-HARNESS] Lifecycle Test"
+            Description = "Automated test - safe to delete"
+            Severity = "low"
+            SequencesConfig = { @{ sequences = @(@{ name = "test"; query = 'activity_type:"app-login"'; condition = @{ triggerOnAnyMatch = $true } }) } }
+            PassThru = { [switch]::Present }
+        }; DependsOn = $null }
+    @{ Cmdlet = "Set-ExaCorrelationRuleState";   Category = "Exabeam"; Subcategory = "CorrelationRules";   Phase = 4; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null; IdProperty = $null; IsMutating = $true; Parameters = @{
+            Id = '{ExaTestRule.id}'
+            Enabled = { $true }
+            PassThru = { [switch]::Present }
+        }; DependsOn = "ExaTestRule" }
+    @{ Cmdlet = "Update-ExaCorrelationRule";     Category = "Exabeam"; Subcategory = "CorrelationRules";   Phase = 4; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null; IdProperty = $null; IsMutating = $true; Parameters = @{
+            Id = '{ExaTestRule.id}'
+            Name = "[TEST-HARNESS] Lifecycle Test - Updated"
+            Severity = "medium"
+            SequencesConfig = { @{ sequences = @(@{ name = "test"; query = 'activity_type:"app-login"'; condition = @{ triggerOnAnyMatch = $true } }) } }
+            PassThru = { [switch]::Present }
+        }; DependsOn = "ExaTestRule" }
+    @{ Cmdlet = "Remove-ExaCorrelationRule";     Category = "Exabeam"; Subcategory = "CorrelationRules";   Phase = 4; IsSlow = $false; IsDiscovery = $false; DiscoveryKey = $null; IdProperty = $null; IsMutating = $true; Parameters = @{
+            Id = '{ExaTestRule.id}'
+            PassThru = { [switch]::Present }
+            Confirm = { $false }
+        }; DependsOn = "ExaTestRule" }
 )
 
 # ============================================================================
@@ -385,8 +514,19 @@ $AllTests = @(
 
 $FilteredTests = $AllTests | Where-Object {
     $Include = $true
-    if ($Category -ne "All" -and $_.Category -ne $Category) { $Include = $false }
+    $IsExabeam = $_.Category -eq "Exabeam"
+
+    # Platform filter
+    if ($IsExabeam -and -not $RunExa) { $Include = $false }
+    if (-not $IsExabeam -and -not $RunLr) { $Include = $false }
+
+    # Category filter (only applies to LogRhythm tests)
+    if (-not $IsExabeam -and $Category -ne "All" -and $_.Category -ne $Category) { $Include = $false }
+
+    # Slow/mutating filters
     if ($SkipSlow -and $_.IsSlow) { $Include = $false }
+    if ($_.Phase -eq 4 -and -not $IncludeMutating) { $Include = $false }
+
     $Include
 }
 
@@ -401,7 +541,7 @@ if ($FilteredTests.Count -eq 0) {
 
 Write-Host ""
 Write-Host "================================================================" -ForegroundColor Cyan
-Write-Host " LogRhythm.Tools v1.5.0 Live API Test Harness" -ForegroundColor Cyan
+Write-Host " SIEM.Tools Live API Test Harness" -ForegroundColor Cyan
 Write-Host "================================================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -418,27 +558,43 @@ try {
     exit 1
 }
 
-# Check LogRhythm config
+# Check platform configs
+$HasLrConfig = $false
+$HasExaConfig = $false
+
 try {
     if ($LrtConfig.LogRhythm.BaseUrl -and $LrtConfig.LogRhythm.BaseUrl -notlike "*NOT_SET*") {
-        Write-Host "[Setup] LogRhythm API: $($LrtConfig.LogRhythm.BaseUrl)" -ForegroundColor White
-    } else {
-        Write-Host "[Setup] FATAL: LogRhythm API not configured (BaseUrl = NOT_SET)" -ForegroundColor Red
-        exit 1
+        $HasLrConfig = $true
+        if ($RunLr) { Write-Host "[Setup] LogRhythm API: $($LrtConfig.LogRhythm.BaseUrl)" -ForegroundColor White }
     }
-} catch {
-    Write-Host "[Setup] FATAL: Config error - $($_.Exception.Message)" -ForegroundColor Red
+} catch { }
+
+try {
+    if ($LrtConfig.Exabeam.BaseUrl -and $LrtConfig.Exabeam.BaseUrl -notlike "*NOT_SET*") {
+        $HasExaConfig = $true
+        if ($RunExa) { Write-Host "[Setup] Exabeam API:   $($LrtConfig.Exabeam.BaseUrl)" -ForegroundColor White }
+    }
+} catch { }
+
+if ($RunExa -and -not $HasExaConfig) {
+    Write-Host "[Setup] FATAL: Exabeam API not configured (BaseUrl = NOT_SET)" -ForegroundColor Red
+    exit 1
+}
+if ($RunLr -and -not $HasLrConfig) {
+    Write-Host "[Setup] FATAL: LogRhythm API not configured (BaseUrl = NOT_SET)" -ForegroundColor Red
     exit 1
 }
 
-Write-Host "[Setup] Tests to run: $($FilteredTests.Count) (Category: $Category, SkipSlow: $SkipSlow)" -ForegroundColor White
+$PlatformLabel = if ($Platform -eq "Both") { "LogRhythm + Exabeam" } else { $Platform }
+$CategoryLabel = if ($RunLr -and $Category -ne "All") { " ($Category)" } else { "" }
+Write-Host "[Setup] Tests to run: $($FilteredTests.Count) (Platform: $PlatformLabel$CategoryLabel, SkipSlow: $SkipSlow)" -ForegroundColor White
 Write-Host ""
 
 # ============================================================================
 # Execute Tests by Phase
 # ============================================================================
 
-foreach ($Phase in @(1, 2, 3)) {
+foreach ($Phase in @(1, 2, 3, 4)) {
     $PhaseTests = @($FilteredTests | Where-Object { $_.Phase -eq $Phase })
     if ($PhaseTests.Count -eq 0) { continue }
 
@@ -446,6 +602,7 @@ foreach ($Phase in @(1, 2, 3)) {
         1 { "Discovery" }
         2 { "Id-Dependent" }
         3 { "Complex Parameters" }
+        4 { "Mutating Lifecycle" }
     }
 
     Write-Host "[Phase $Phase] $PhaseLabel ($($PhaseTests.Count) cmdlets)" -ForegroundColor Yellow
@@ -461,7 +618,7 @@ foreach ($Phase in @(1, 2, 3)) {
                 cmdlet         = $CmdletName
                 category       = $Test.Category
                 subcategory    = $Test.Subcategory
-                service        = "lr-admin-api"
+                service        = if ($Test.Category -eq "Exabeam") { "exa-api" } else { "lr-admin-api" }
                 status         = "SKIP"
                 httpStatusCode = $null
                 elapsedMs      = 0
@@ -500,7 +657,7 @@ foreach ($Phase in @(1, 2, 3)) {
             cmdlet         = $CmdletName
             category       = $Test.Category
             subcategory    = $Test.Subcategory
-            service        = "lr-admin-api"
+            service        = if ($Test.Category -eq "Exabeam") { "exa-api" } else { "lr-admin-api" }
             status         = $Result.Status
             httpStatusCode = $Result.HttpCode
             elapsedMs      = $Result.ElapsedMs
@@ -564,8 +721,9 @@ if ($TimedResults.Count -gt 0) {
 # ============================================================================
 
 $Timestamp = (Get-Date -Format "yyyy-MM-ddTHHmm")
-$CategoryLabel = $Category.ToLower()
-$ResultFileName = "${Timestamp}_lr_${CategoryLabel}.json"
+$PlatformTag = $Platform.ToLower()
+$CategoryTag = if ($RunLr -and $Category -ne "All") { "_$($Category.ToLower())" } else { "" }
+$ResultFileName = "${Timestamp}_${PlatformTag}${CategoryTag}.json"
 $ResultFilePath = Join-Path $ResultsDir $ResultFileName
 
 $OutputObject = [ordered]@{
@@ -575,7 +733,9 @@ $OutputObject = [ordered]@{
         endTime        = $RunEnd.ToString("o")
         durationSec    = [int]($RunEnd - $RunStart).TotalSeconds
         moduleVersion  = "$($Module.Version)"
-        baseUrl        = "$($LrtConfig.LogRhythm.BaseUrl)"
+        platform       = $Platform
+        lrBaseUrl      = if ($RunLr) { "$($LrtConfig.LogRhythm.BaseUrl)" } else { $null }
+        exaBaseUrl     = if ($RunExa) { "$($LrtConfig.Exabeam.BaseUrl)" } else { $null }
         category       = $Category
         skipSlow       = [bool]$SkipSlow
         totalTests     = $TestResults.Count
