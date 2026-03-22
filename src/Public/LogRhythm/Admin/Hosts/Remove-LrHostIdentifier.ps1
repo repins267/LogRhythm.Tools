@@ -141,7 +141,7 @@ Function Remove-LrHostIdentifier {
                 }
             } else {
                 $ErrorObject.Error = $true
-                $ErrorObject.Note = "RecordStatus [$Type] must be: ipaddress, dnsname, or windowsname"
+                $ErrorObject.Note = "Type [$Type] must be: ipaddress, dnsname, or windowsname"
                 return $ErrorObject
             }
         }

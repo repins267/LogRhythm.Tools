@@ -11,6 +11,20 @@ Function Import-LrHosts {
         Admin API.
     .PARAMETER EntityId
         The entity ID to import hosts into.
+
+        IMPORTANT - DHCP/VDI Host Identifier Requirements:
+        For hosts in DHCP or VDI environments, the import file must create BOTH
+        identifier types per host to prevent duplicate host records on IP change:
+          - HostIdentifierType=1 (IPAddress): The host's current IP
+          - HostIdentifierType=3 (WindowsName): The host's NetBIOS/hostname
+
+        Single-identifier imports (IP only) create hosts that are vulnerable to
+        DHCP churn duplicate creation. When the IP changes, the Mediator cannot
+        match the host by hostname and creates a new Host record.
+
+        For the API JSON format, use two rows per host with the same HostName
+        but different HostIdentifierType/HostIdentifierValue pairs.
+        See: docs/Host-Bulk-Import-With-Identifiers.md
     .PARAMETER FilePath
         The full path to the host import file.
     .PARAMETER PassThru

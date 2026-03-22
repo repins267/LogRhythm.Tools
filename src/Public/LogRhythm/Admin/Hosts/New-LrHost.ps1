@@ -208,10 +208,20 @@ Function New-LrHost {
         [string] $OSType = "server",
 
 
-        [Parameter(Mandatory = $false, Position = 16)]
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 16)]
+        [ValidatePattern('^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')]
+        [string] $IPAddress,
+
+
+        [Parameter(Mandatory = $false, ValueFromPipelineByPropertyName = $true, Position = 17)]
+        [ValidateScript({ $_ -notmatch '^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$' })]
+        [string] $Hostname,
+
+
+        [Parameter(Mandatory = $false, Position = 18)]
         [switch] $PassThru,
 
-        [Parameter(Mandatory = $false, Position = 17)]
+        [Parameter(Mandatory = $false, Position = 19)]
         [ValidateNotNull()]
         [pscredential] $Credential = $LrtConfig.LogRhythm.ApiKey
     )
@@ -456,7 +466,32 @@ Function New-LrHost {
             return $ErrorObject
         }
 
+        # Add identifiers if host creation succeeded and identifiers were requested
+        if ($Response -and (-not $Response.Error) -and ($IPAddress -or $Hostname)) {
+            $HostId = $Response.id
+            if ($HostId) {
+                if ($IPAddress) {
+                    Write-Verbose "[$Me]: Adding IPAddress identifier: $IPAddress"
+                    $IpResult = Update-LrHostIdentifier -Id $HostId -Type 'ipaddress' -Value $IPAddress -PassThru -Credential $Credential
+                    if ($IpResult.Error) {
+                        Write-Warning "[$Me]: Host created (ID: $HostId) but failed to add IPAddress identifier: $($IpResult.Note)"
+                    }
+                }
+                if ($Hostname) {
+                    Write-Verbose "[$Me]: Adding WindowsName identifier: $Hostname"
+                    $NameResult = Update-LrHostIdentifier -Id $HostId -Type 'windowsname' -Value $Hostname -PassThru -Credential $Credential
+                    if ($NameResult.Error) {
+                        Write-Warning "[$Me]: Host created (ID: $HostId) but failed to add WindowsName identifier: $($NameResult.Note)"
+                    }
+                }
+            }
+        }
+
         if ($PassThru) {
+            # Re-fetch to include identifiers in output
+            if ($Response -and $Response.id -and ($IPAddress -or $Hostname)) {
+                return Get-LrHostDetails -Id $Response.id
+            }
             return $Response
         }
     }
